@@ -24,7 +24,6 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#f8fafc' },
         }}>
         <Stack.Screen
           name="index"
@@ -39,12 +38,9 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="home"
+          name="(tabs)"
           options={{
             headerShown: false,
-            gestureEnabled: false,
-            animation: 'none',
-            title: '',
           }}
         />
       </Stack>
