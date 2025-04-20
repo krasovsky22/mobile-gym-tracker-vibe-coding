@@ -21,7 +21,11 @@ export default function RootLayout() {
     <ConvexAuthProvider
       client={convex}
       storage={Platform.OS === 'android' || Platform.OS === 'ios' ? secureStorage : undefined}>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#f8fafc' },
+        }}>
         <Stack.Screen
           name="index"
           options={{
@@ -40,6 +44,7 @@ export default function RootLayout() {
             headerShown: false,
             gestureEnabled: false,
             animation: 'none',
+            title: '',
           }}
         />
       </Stack>
