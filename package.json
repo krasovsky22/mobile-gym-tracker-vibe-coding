@@ -11,6 +11,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@auth/core": "0.37.0",
+    "@convex-dev/auth": "^0.0.81",
     "expo": "^52.0.46",
     "expo-constants": "^17.0.8",
     "expo-linking": "^7.0.5",
