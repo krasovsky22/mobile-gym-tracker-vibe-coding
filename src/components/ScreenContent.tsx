@@ -1,4 +1,5 @@
-import { Text, View } from 'react-native';
+import { Link } from 'expo-router';
+import { Pressable, Text, View } from 'react-native';
 
 import { EditScreenInfo } from './EditScreenInfo';
 
@@ -12,9 +13,14 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
   return (
     // Apply Tailwind classes directly to className
     <View className="flex-1 items-center justify-center">
+      <Link href="/home" asChild>
+        <Pressable>
+          <Text>Home 234</Text>
+        </Pressable>
+      </Link>
       <Text className="text-xl font-bold">{title}</Text>
       {/* You might want to adjust styling for the separator */}
-      <View className="my-7 h-[1px] w-4/5 bg-gray-200" /> 
+      <View className="my-7 h-[1px] w-4/5 bg-gray-200" />
       <EditScreenInfo path={path} />
       {children}
     </View>
