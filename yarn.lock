@@ -3676,7 +3676,7 @@ convert-source-map@^2.0.0:
 
 convex@^1.23.0:
   version "1.23.0"
-  resolved "https://registry.npmjs.org/convex/-/convex-1.23.0.tgz"
+  resolved "https://registry.yarnpkg.com/convex/-/convex-1.23.0.tgz#cf8a900a961db1a8be7cc1f190ed77e8b992dcac"
   integrity sha512-Mz2GpCrw3wXR+TWQgUjQPLkZ5ZhnSSJbvZ/+GUdBY4yMwPpoPw5T6DszAFUB2o1SKyhmyes1iYGijueNsZb/Xw==
   dependencies:
     esbuild "0.25.1"

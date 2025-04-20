@@ -21,7 +21,9 @@ export default function RootLayout() {
         <ConvexAuthProvider
             client={convex}
             storage={
-                secureStorage
+                Platform.OS === "android" || Platform.OS === "ios"
+                    ? secureStorage
+                    : undefined
             }
         >
             <Stack>
