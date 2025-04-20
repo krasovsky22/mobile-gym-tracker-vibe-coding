@@ -1,26 +1,32 @@
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import {ConvexAuthProvider} from "@convex-dev/auth/react";
+import {ConvexReactClient} from "convex/react";
+import {Stack} from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 import 'global.css';
+import {Platform} from "react-native";
 
-// SplashScreen.preventAutoHideAsync();
+const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+    unsavedChangesWarning: false,
+});
+
+const secureStorage = {
+    getItem: SecureStore.getItemAsync,
+    setItem: SecureStore.setItemAsync,
+    removeItem: SecureStore.deleteItemAsync,
+};
 
 export default function RootLayout() {
-    // const [loaded] = useFonts({
-    //     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    // });
-
-    // useEffect(() => {
-    //     if (loaded) {
-    //         SplashScreen.hideAsync();
-    //     }
-    // }, [loaded]);
-    //
-    // if (!loaded) {
-    //     return null;
-    // }
-
-    return <Stack />;
+    return (
+        <ConvexAuthProvider
+            client={convex}
+            storage={
+                secureStorage
+            }
+        >
+            <Stack>
+                <Stack.Screen name="index"/>
+            </Stack>
+        </ConvexAuthProvider>
+    );
 }
