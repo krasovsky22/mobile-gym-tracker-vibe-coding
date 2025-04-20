@@ -2,7 +2,7 @@ import { useAuthActions } from '@convex-dev/auth/react';
 import { useConvexAuth } from 'convex/react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import { ProtectedRoute } from '../../components/ProtectedRoute';
+import { ProtectedRoute } from '~/components/ProtectedRoute';
 
 export default function HomeScreen() {
   const { isAuthenticated } = useConvexAuth();
