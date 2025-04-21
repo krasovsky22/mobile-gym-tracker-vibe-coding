@@ -53,7 +53,7 @@ export default function ExercisesScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="mt-4 flex-1 bg-white">
       <View className="p-4">
         <TextInput
           className="rounded-lg border border-gray-200 p-3"
