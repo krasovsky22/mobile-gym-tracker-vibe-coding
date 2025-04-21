@@ -1,9 +1,8 @@
+import { api } from 'convex/_generated/api';
+import { Id } from 'convex/_generated/dataModel';
 import { useQuery } from 'convex/react';
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { Id } from 'convex/_generated/dataModel';
-
-import { api } from 'convex/_generated/api';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -41,16 +40,10 @@ export default function ExerciseSelectModal({
   );
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View className="flex-1 bg-white">
         <View className="flex-row items-center border-b border-gray-200 p-4">
-          <TouchableOpacity
-            className="mr-4 rounded-lg bg-gray-100 px-4 py-2"
-            onPress={onClose}>
+          <TouchableOpacity className="mr-4 rounded-lg bg-gray-100 px-4 py-2" onPress={onClose}>
             <Text className="font-semibold text-gray-700">Cancel</Text>
           </TouchableOpacity>
           <Text className="text-xl font-semibold">Select Exercise</Text>
@@ -83,4 +76,4 @@ export default function ExerciseSelectModal({
       </View>
     </Modal>
   );
-} 
+}

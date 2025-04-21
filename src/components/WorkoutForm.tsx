@@ -1,9 +1,9 @@
 import { api } from 'convex/_generated/api';
 import { Id } from 'convex/_generated/dataModel';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 
 import ExerciseSelectModal from './ExerciseSelectModal';
 
@@ -25,7 +25,6 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
   const router = useRouter();
   const createWorkout = useMutation(api.workouts.create);
   const updateWorkout = useMutation(api.workouts.update);
-  const exercises = useQuery(api.exercises.list);
 
   const [name, setName] = useState(initialData?.name || '');
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutExercise[]>(
@@ -144,10 +143,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
               <View className="mb-2">
                 <Text className="mb-1 text-gray-600">Exercise</Text>
                 <View className="rounded-lg border border-gray-300 p-3">
-                  <Text>
-                    {exercises?.find((e) => e._id === exercise.exerciseId)?.name ||
-                      'Select an exercise'}
-                  </Text>
+                  <Text>{exercise.exerciseId ? 'Selected' : 'Select an exercise'}</Text>
                 </View>
               </View>
 
@@ -157,7 +153,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
                   className="rounded-lg border border-gray-300 p-3"
                   value={exercise.sets.toString()}
                   onChangeText={(value) =>
-                    handleUpdateExercise(index, 'sets', parseInt(value) || 0)
+                    handleUpdateExercise(index, 'sets', parseInt(value, 10) || 0)
                   }
                   keyboardType="numeric"
                   placeholder="e.g., 3"
