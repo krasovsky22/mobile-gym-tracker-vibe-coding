@@ -1,6 +1,6 @@
 import { api } from 'convex/_generated/api';
 import { useConvexAuth, useQuery } from 'convex/react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default function AccountSettingsScreen() {
   const { isAuthenticated } = useConvexAuth();
