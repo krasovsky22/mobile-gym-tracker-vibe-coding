@@ -1,20 +1,22 @@
 import { View, Text } from 'react-native';
 
+import { Header } from '~/components/Header';
 import { ProtectedRoute } from '~/components/ProtectedRoute';
 
-export default function HomeScreen() {
+export default function UpdateUserScreen() {
   return (
     <ProtectedRoute>
       <View className="flex-1 bg-neutral-50">
-        <View className="flex-1 items-center justify-center p-6">
+        <Header title="Update Profile" />
+        <View className="flex-1 p-6">
           <Text className="mb-4 text-center text-3xl font-bold text-neutral-900">
-            Welcome to Gym Tracker
+            Update Profile
           </Text>
           <Text className="text-center text-neutral-600">
-            Start tracking your workouts and progress
+            Update your personal information
           </Text>
         </View>
       </View>
     </ProtectedRoute>
   );
-}
+} 
