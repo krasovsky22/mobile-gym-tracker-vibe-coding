@@ -40,7 +40,7 @@ export default function ExercisesScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="mt-3 flex-1 bg-white">
       <View className="p-4">
         <TouchableOpacity
           className="rounded-lg bg-blue-500 p-4"

@@ -1,12 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
-
-import { ScreenContent } from '~/components/ScreenContent';
+import { Redirect, usePathname } from 'expo-router';
 
 export default function App() {
-  return (
-    <>
-      <ScreenContent title="Home" path="App.tsx" />
-      <StatusBar style="auto" />
-    </>
-  );
+  const pathname = usePathname();
+  console.log(pathname);
+
+  return <Redirect href="/home" />;
 }

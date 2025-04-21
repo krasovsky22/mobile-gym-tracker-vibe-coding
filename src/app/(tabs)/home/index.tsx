@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native';
 import { useAuthActions } from '@convex-dev/auth/react';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 export default function HomeScreen() {
   const { signOut } = useAuthActions();
@@ -13,14 +13,9 @@ export default function HomeScreen() {
         </Text>
       </View>
 
-      <TouchableOpacity 
-        className="rounded-lg bg-red-500 p-4" 
-        onPress={signOut}
-      >
-        <Text className="text-center font-semibold text-white">
-          Sign Out
-        </Text>
+      <TouchableOpacity className="rounded-lg bg-red-500 p-4" onPress={signOut}>
+        <Text className="text-center font-semibold text-white">Sign Out</Text>
       </TouchableOpacity>
     </View>
   );
-} 
+}
