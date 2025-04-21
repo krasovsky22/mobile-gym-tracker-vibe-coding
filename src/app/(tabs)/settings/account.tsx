@@ -1,8 +1,14 @@
+import { api } from 'convex/_generated/api';
+import { useConvexAuth, useQuery } from 'convex/react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useAuth } from 'convex/react';
 
 export default function AccountSettingsScreen() {
-  const { user } = useAuth();
+  const { isAuthenticated } = useConvexAuth();
+  const user = useQuery(api.users.getCurrentUser);
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   return (
     <View className="flex-1 bg-white p-4">
@@ -13,8 +19,8 @@ export default function AccountSettingsScreen() {
       <View className="space-y-4">
         <View className="rounded-lg border border-gray-200 p-4">
           <Text className="text-lg font-semibold">Profile</Text>
-          <Text className="text-gray-600">Email: {user?.email}</Text>
-          <Text className="text-gray-600">Name: {user?.name}</Text>
+          <Text className="text-gray-600">Email: {user.email}</Text>
+          <Text className="text-gray-600">Name: {user.name}</Text>
         </View>
 
         <View className="rounded-lg border border-gray-200 p-4">
@@ -30,4 +36,4 @@ export default function AccountSettingsScreen() {
       </View>
     </View>
   );
-} 
+}
