@@ -45,6 +45,29 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="exercises"
+            options={{
+              headerShown: true,
+              title: 'Exercises',
+            }}
+          />
+          <Stack.Screen
+            name="exercises/add"
+            options={{
+              headerShown: true,
+              title: 'Add Exercise',
+              presentation: 'modal',
+            }}
+          />
+          <Stack.Screen
+            name="exercises/[id]"
+            options={{
+              headerShown: true,
+              title: 'Edit Exercise',
+              presentation: 'modal',
+            }}
+          />
         </Stack>
       </ConvexAuthProvider>
     </SafeAreaProvider>
