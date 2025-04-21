@@ -112,4 +112,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Expo](https://expo.dev/) for the amazing React Native development platform
 - [Convex](https://www.convex.dev/) for the backend services
-- [Tailwind CSS](https://tailwindcss.com/) for the styling utilities 
+- [Tailwind CSS](https://tailwindcss.com/) for the styling utilities
