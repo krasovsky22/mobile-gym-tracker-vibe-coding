@@ -1,15 +1,28 @@
+import { api } from 'convex/_generated/api';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
-
-import { api } from '../../../../../convex/_generated/api';
+import { useState, useMemo } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
 
 export default function ExercisesScreen() {
   const router = useRouter();
   const exercises = useQuery(api.exercises.list);
   const deleteExercise = useMutation(api.exercises.remove);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredExercises = useMemo(() => {
+    if (!exercises) return [];
+    if (!searchQuery.trim()) return exercises;
+
+    const query = searchQuery.toLowerCase();
+    return exercises.filter(
+      (exercise) =>
+        exercise.name.toLowerCase().includes(query) ||
+        exercise.category?.toLowerCase().includes(query) ||
+        exercise.muscleGroup?.toLowerCase().includes(query)
+    );
+  }, [exercises, searchQuery]);
 
   const handleDelete = async (exerciseId: string) => {
     Alert.alert('Delete Exercise', 'Are you sure you want to delete this exercise?', [
@@ -40,17 +53,18 @@ export default function ExercisesScreen() {
   };
 
   return (
-    <View className="mt-3 flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <View className="p-4">
-        <TouchableOpacity
-          className="rounded-lg bg-blue-500 p-4"
-          onPress={() => router.push('/settings/exercises/add')}>
-          <Text className="text-center font-semibold text-white">Add New Exercise</Text>
-        </TouchableOpacity>
+        <TextInput
+          className="rounded-lg border border-gray-200 p-3"
+          placeholder="Search exercises..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
       </View>
 
       <ScrollView className="flex-1 px-4">
-        {exercises?.map((exercise) => (
+        {filteredExercises.map((exercise) => (
           <View key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
             <View className="flex-row justify-between">
               <View className="flex-1">
@@ -75,6 +89,14 @@ export default function ExercisesScreen() {
           </View>
         ))}
       </ScrollView>
+
+      <View className="absolute bottom-0 left-0 right-0 bg-white p-4">
+        <TouchableOpacity
+          className="rounded-lg bg-blue-500 p-4"
+          onPress={() => router.push('/settings/exercises/add')}>
+          <Text className="text-center font-semibold text-white">Add New Exercise</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
