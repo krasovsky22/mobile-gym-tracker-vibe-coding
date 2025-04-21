@@ -13,6 +13,15 @@ const schema = defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
   }),
+  workouts: defineTable({
+    name: v.string(),
+    exercises: v.array(
+      v.object({
+        exerciseId: v.id('exercises'),
+        sets: v.number(),
+      })
+    ),
+  }),
   // Your other tables...
 });
 

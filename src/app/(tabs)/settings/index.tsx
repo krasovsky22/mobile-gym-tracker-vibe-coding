@@ -24,6 +24,13 @@ export default function SettingsScreen() {
 
           <TouchableOpacity
             className="rounded-lg border border-gray-200 p-4"
+            onPress={() => router.push('/settings/workouts')}>
+            <Text className="text-lg font-semibold">Workouts</Text>
+            <Text className="text-gray-600">Manage your workout library</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="rounded-lg border border-gray-200 p-4"
             onPress={() => router.push('/settings/account')}>
             <Text className="text-lg font-semibold">Account</Text>
             <Text className="text-gray-600">Manage your account settings</Text>
