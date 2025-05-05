@@ -1,12 +1,13 @@
+import { api } from 'convex/_generated/api';
+import { Id } from 'convex/_generated/dataModel';
 import { useQuery } from 'convex/react';
 import { useLocalSearchParams } from 'expo-router';
 import { View, Text } from 'react-native';
 
 import WorkoutForm from '~/components/WorkoutForm';
-import { api } from 'convex/_generated/api';
 
 export default function EditWorkoutScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<{ id: Id<'workouts'> }>();
   const workout = useQuery(api.workouts.get, { id });
 
   if (!workout) {
@@ -27,4 +28,4 @@ export default function EditWorkoutScreen() {
       }}
     />
   );
-} 
+}

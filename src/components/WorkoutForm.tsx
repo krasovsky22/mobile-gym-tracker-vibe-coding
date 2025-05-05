@@ -1,13 +1,13 @@
 import { api } from 'convex/_generated/api';
-import { Id } from 'convex/_generated/dataModel';
-import { useMutation } from 'convex/react';
+import { Id, Doc } from 'convex/_generated/dataModel';
+import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 
 import ExerciseSelectModal from './ExerciseSelectModal';
 
-type WorkoutExercise = {
+export type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
   sets: number;
 };
@@ -25,6 +25,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
   const router = useRouter();
   const createWorkout = useMutation(api.workouts.create);
   const updateWorkout = useMutation(api.workouts.update);
+  const exercisesList = useQuery(api.exercises.list);
 
   const [name, setName] = useState(initialData?.name || '');
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutExercise[]>(
@@ -45,7 +46,17 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
   };
 
   const handleSelectExercise = (exerciseId: Id<'exercises'>) => {
-    setWorkoutExercises([...workoutExercises, { exerciseId, sets: 3 }]);
+    const selectedExercise = exercisesList?.find((exercise) => exercise._id === exerciseId);
+    if (selectedExercise) {
+      setWorkoutExercises([
+        ...workoutExercises,
+        {
+          exerciseId,
+          sets: 3,
+          ...selectedExercise,
+        },
+      ]);
+    }
     setShowExerciseDialog(false);
   };
 
@@ -74,16 +85,21 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
 
     try {
       setIsSubmitting(true);
+      const exercises = workoutExercises.map(({ exerciseId, sets }) => ({
+        exerciseId,
+        sets,
+      }));
+
       if (mode === 'add') {
         await createWorkout({
           name,
-          exercises: workoutExercises,
+          exercises,
         });
       } else if (mode === 'edit' && workoutId) {
         await updateWorkout({
           id: workoutId,
           name,
-          exercises: workoutExercises,
+          exercises,
         });
       }
       router.back();
@@ -129,38 +145,46 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
             </TouchableOpacity>
           </View>
 
-          {workoutExercises.map((exercise, index) => (
-            <View key={index} className="mb-4 rounded-lg border border-gray-200 p-4">
-              <View className="mb-2 flex-row items-center justify-between">
-                <Text className="text-lg font-semibold">Exercise {index + 1}</Text>
-                <TouchableOpacity
-                  className="rounded-lg bg-red-100 px-3 py-2"
-                  onPress={() => handleRemoveExercise(index)}>
-                  <Text className="font-semibold text-red-700">Remove</Text>
-                </TouchableOpacity>
-              </View>
+          {workoutExercises.map((workoutExercise, index) => {
+            const exercise = exercisesList?.find((ex) => ex._id === workoutExercise.exerciseId);
+            if (!exercise) {
+              return null; // Skip rendering if exercise is not found
+            }
+            return (
+              <View key={index} className="mb-4 rounded-lg border border-gray-200 p-4">
+                <View className="mb-2 flex-row items-center justify-between">
+                  <Text className="text-lg font-semibold">Exercise {index + 1}</Text>
+                  <TouchableOpacity
+                    className="rounded-lg bg-red-100 px-3 py-2"
+                    onPress={() => handleRemoveExercise(index)}>
+                    <Text className="font-semibold text-red-700">Remove</Text>
+                  </TouchableOpacity>
+                </View>
 
-              <View className="mb-2">
-                <Text className="mb-1 text-gray-600">Exercise</Text>
-                <View className="rounded-lg border border-gray-300 p-3">
-                  <Text>{exercise.exerciseId ? 'Selected' : 'Select an exercise'}</Text>
+                <View className="mb-2">
+                  <Text className="mb-1 text-gray-600">Exercise</Text>
+                  <View className="flex flex-row gap-1 rounded-lg border border-gray-300 p-3">
+                    <Text className="flex-1">{exercise.name || 'No exercise selected'}</Text>
+                    <Text>Muscle Group</Text>
+                    <Text className="text-gray-500">{exercise.muscleGroup || 'N/A'}</Text>
+                  </View>
+                </View>
+
+                <View>
+                  <Text className="mb-1 text-gray-600">Number of Sets</Text>
+                  <TextInput
+                    className="rounded-lg border border-gray-300 p-3"
+                    value={workoutExercise.sets.toString()}
+                    onChangeText={(value) =>
+                      handleUpdateExercise(index, 'sets', parseInt(value, 10) || 0)
+                    }
+                    keyboardType="numeric"
+                    placeholder="e.g., 3"
+                  />
                 </View>
               </View>
-
-              <View>
-                <Text className="mb-1 text-gray-600">Number of Sets</Text>
-                <TextInput
-                  className="rounded-lg border border-gray-300 p-3"
-                  value={exercise.sets.toString()}
-                  onChangeText={(value) =>
-                    handleUpdateExercise(index, 'sets', parseInt(value, 10) || 0)
-                  }
-                  keyboardType="numeric"
-                  placeholder="e.g., 3"
-                />
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
       </ScrollView>
 
