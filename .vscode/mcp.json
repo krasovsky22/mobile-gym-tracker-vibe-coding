@@ -1,0 +1,15 @@
+{
+    "servers": {
+        "context7": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp@latest"
+            ]
+        },
+        "convex": {
+            "command": "npx",
+            "args": ["-y", "convex@latest", "mcp", "start"]
+        }
+    }
+}
