@@ -33,6 +33,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showExerciseDialog, setShowExerciseDialog] = useState(false);
+  const [editExerciseIndex, setEditExerciseIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -48,16 +49,28 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
   const handleSelectExercise = (exerciseId: Id<'exercises'>) => {
     const selectedExercise = exercisesList?.find((exercise) => exercise._id === exerciseId);
     if (selectedExercise) {
-      setWorkoutExercises([
-        ...workoutExercises,
-        {
-          exerciseId,
-          sets: 3,
-          ...selectedExercise,
-        },
-      ]);
+      setWorkoutExercises((prev) => {
+        if (editExerciseIndex !== null) {
+          // Update the exercise at the edit index
+          return prev.map((exercise, index) =>
+            index === editExerciseIndex
+              ? { exerciseId, sets: exercise.sets, ...selectedExercise }
+              : exercise
+          );
+        }
+        // Add a new exercise if not editing
+        return [
+          ...prev,
+          {
+            exerciseId,
+            sets: 3,
+            ...selectedExercise,
+          },
+        ];
+      });
     }
     setShowExerciseDialog(false);
+    setEditExerciseIndex(null); // Reset edit index after selection
   };
 
   const handleRemoveExercise = (index: number) => {
@@ -75,6 +88,15 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
       [field]: value,
     };
     setWorkoutExercises(updatedExercises);
+  };
+
+  const handleEditExercise = (index: number) => {
+    const exerciseToEdit = workoutExercises[index];
+    setShowExerciseDialog(true);
+    setEditExerciseIndex(index);
+    setWorkoutExercises((prev) =>
+      prev.map((exercise, i) => (i === index ? { ...exerciseToEdit } : exercise))
+    );
   };
 
   const handleSubmit = async () => {
@@ -102,7 +124,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
           exercises,
         });
       }
-      router.back();
+      router.replace('/settings/workouts');
     } catch (error) {
       console.error(`Error ${mode === 'add' ? 'creating' : 'updating'} workout:`, error);
       Alert.alert('Error', `Failed to ${mode === 'add' ? 'create' : 'update'} workout`);
@@ -116,7 +138,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
       <View className="flex-row items-center border-b border-gray-200 p-4">
         <TouchableOpacity
           className="mr-4 rounded-lg bg-gray-100 px-4 py-2"
-          onPress={() => router.back()}>
+          onPress={() => router.replace('/settings/workouts')}>
           <Text className="font-semibold text-gray-700">Back</Text>
         </TouchableOpacity>
         <Text className="text-xl font-semibold">
@@ -154,11 +176,18 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
               <View key={index} className="mb-4 rounded-lg border border-gray-200 p-4">
                 <View className="mb-2 flex-row items-center justify-between">
                   <Text className="text-lg font-semibold">Exercise {index + 1}</Text>
-                  <TouchableOpacity
-                    className="rounded-lg bg-red-100 px-3 py-2"
-                    onPress={() => handleRemoveExercise(index)}>
-                    <Text className="font-semibold text-red-700">Remove</Text>
-                  </TouchableOpacity>
+                  <View className="flex-row">
+                    <TouchableOpacity
+                      className="mr-2 rounded-lg bg-yellow-100 px-3 py-2"
+                      onPress={() => handleEditExercise(index)}>
+                      <Text className="font-semibold text-yellow-700">Edit</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      className="rounded-lg bg-red-100 px-3 py-2"
+                      onPress={() => handleRemoveExercise(index)}>
+                      <Text className="font-semibold text-red-700">Remove</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 <View className="mb-2">
