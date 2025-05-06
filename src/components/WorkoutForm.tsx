@@ -1,8 +1,8 @@
 import { api } from 'convex/_generated/api';
-import { Id, Doc } from 'convex/_generated/dataModel';
+import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 
 import ExerciseSelectModal from './ExerciseSelectModal';
@@ -23,6 +23,7 @@ type WorkoutFormProps = {
 
 export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFormProps) {
   const router = useRouter();
+  const scrollViewRef = useRef<ScrollView>(null);
   const createWorkout = useMutation(api.workouts.create);
   const updateWorkout = useMutation(api.workouts.update);
   const exercisesList = useQuery(api.exercises.list);
@@ -44,6 +45,12 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
 
   const handleAddExercise = () => {
     setShowExerciseDialog(true);
+  };
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
   };
 
   const handleSelectExercise = (exerciseId: Id<'exercises'>) => {
@@ -71,6 +78,11 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
     }
     setShowExerciseDialog(false);
     setEditExerciseIndex(null); // Reset edit index after selection
+
+    // Only scroll when adding a new exercise, not when editing
+    if (editExerciseIndex === null) {
+      scrollToBottom();
+    }
   };
 
   const handleRemoveExercise = (index: number) => {
@@ -146,7 +158,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
         </Text>
       </View>
 
-      <ScrollView className="flex-1 p-4">
+      <ScrollView ref={scrollViewRef} className="flex-1 p-4">
         <View className="mb-4">
           <Text className="mb-2 text-lg font-semibold">Workout Name</Text>
           <TextInput
@@ -160,11 +172,6 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
         <View className="mb-4">
           <View className="mb-2 flex-row items-center justify-between">
             <Text className="text-lg font-semibold">Exercises</Text>
-            <TouchableOpacity
-              className="rounded-lg bg-blue-500 px-3 py-2"
-              onPress={handleAddExercise}>
-              <Text className="font-semibold text-white">Add Exercise</Text>
-            </TouchableOpacity>
           </View>
 
           {workoutExercises.map((workoutExercise, index) => {
@@ -174,8 +181,14 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
             }
             return (
               <View key={index} className="mb-4 rounded-lg border border-gray-200 p-4">
-                <View className="mb-2 flex-row items-center justify-between">
-                  <Text className="text-lg font-semibold">Exercise {index + 1}</Text>
+                <View className="mb-2 flex-row items-center justify-between gap-2">
+                  <View className="flex flex-1 flex-row gap-1 text-lg font-semibold">
+                    <Text className="flex-1">
+                      {index + 1} {exercise.name || 'No exercise selected'}
+                    </Text>
+                    <Text>Muscle Group</Text>
+                    <Text className="text-gray-500">{exercise.muscleGroup || 'N/A'}</Text>
+                  </View>
                   <View className="flex-row">
                     <TouchableOpacity
                       className="mr-2 rounded-lg bg-yellow-100 px-3 py-2"
@@ -190,24 +203,18 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
                   </View>
                 </View>
 
-                <View className="mb-2">
-                  <Text className="mb-1 text-gray-600">Exercise</Text>
-                  <View className="flex flex-row gap-1 rounded-lg border border-gray-300 p-3">
-                    <Text className="flex-1">{exercise.name || 'No exercise selected'}</Text>
-                    <Text>Muscle Group</Text>
-                    <Text className="text-gray-500">{exercise.muscleGroup || 'N/A'}</Text>
+                <View className="flex flex-row items-center gap-2">
+                  <View className="flex-1">
+                    <Text className=" text-gray-600">Number of Sets</Text>
                   </View>
-                </View>
-
-                <View>
-                  <Text className="mb-1 text-gray-600">Number of Sets</Text>
                   <TextInput
-                    className="rounded-lg border border-gray-300 p-3"
+                    className="w-16 rounded-lg border border-gray-300 p-3 text-center"
                     value={workoutExercise.sets.toString()}
                     onChangeText={(value) =>
                       handleUpdateExercise(index, 'sets', parseInt(value, 10) || 0)
                     }
                     keyboardType="numeric"
+                    maxLength={3}
                     placeholder="e.g., 3"
                   />
                 </View>
@@ -217,7 +224,13 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
         </View>
       </ScrollView>
 
-      <View className="border-t border-gray-200 bg-white p-4">
+      <View className="space-y-4 p-4">
+        <TouchableOpacity className="rounded-lg bg-blue-500 px-3 py-2" onPress={handleAddExercise}>
+          <Text className="text-center font-semibold text-white">Add Exercise</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="space-y-4 border-t border-gray-200 bg-white p-4">
         <TouchableOpacity
           className={`rounded-lg p-4 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-500'}`}
           onPress={handleSubmit}
