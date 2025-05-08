@@ -15,6 +15,7 @@
     "@auth/core": "0.37.0",
     "@convex-dev/auth": "^0.0.81",
     "@react-native-community/cli-server-api": "^18.0.0",
+    "@upstash/context7-mcp": "^1.0.7",
     "convex": "^1.23.0",
     "expo": "^52.0.39",
     "expo-auth-session": "~6.0.3",

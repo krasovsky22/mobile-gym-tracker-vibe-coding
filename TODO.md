@@ -1,6 +1,7 @@
 # TODO List
 
 ## High Priority
+- [ ] Delete workout button functionality and ui updates
 - [ ] Create workout tracking functionality in `src/app/(tabs)/track-workout.tsx`
 
 ## Medium Priority

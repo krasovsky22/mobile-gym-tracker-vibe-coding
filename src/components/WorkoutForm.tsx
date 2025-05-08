@@ -3,8 +3,9 @@ import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
+import { useAlert } from './AlertProvider';
 import ExerciseSelectModal from './ExerciseSelectModal';
 
 export type WorkoutExercise = {
@@ -23,6 +24,7 @@ type WorkoutFormProps = {
 
 export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFormProps) {
   const router = useRouter();
+  const { error } = useAlert();
   const scrollViewRef = useRef<ScrollView>(null);
   const createWorkout = useMutation(api.workouts.create);
   const updateWorkout = useMutation(api.workouts.update);
@@ -113,7 +115,7 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
 
   const handleSubmit = async () => {
     if (!name || workoutExercises.length === 0) {
-      Alert.alert('Error', 'Please fill in all fields and add at least one exercise');
+      error('Please fill in all fields and add at least one exercise');
       return;
     }
 
@@ -137,9 +139,9 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
         });
       }
       router.replace('/settings/workouts');
-    } catch (error) {
-      console.error(`Error ${mode === 'add' ? 'creating' : 'updating'} workout:`, error);
-      Alert.alert('Error', `Failed to ${mode === 'add' ? 'create' : 'update'} workout`);
+    } catch (err) {
+      console.error(`Error ${mode === 'add' ? 'creating' : 'updating'} workout:`, err);
+      error(`Failed to ${mode === 'add' ? 'create' : 'update'} workout`);
     } finally {
       setIsSubmitting(false);
     }

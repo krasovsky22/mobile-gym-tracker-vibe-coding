@@ -3,7 +3,9 @@ import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+
+import { useAlert } from '~/components/AlertProvider';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -19,33 +21,26 @@ type Workout = {
 
 export default function WorkoutsScreen() {
   const router = useRouter();
+  const { confirm, error } = useAlert();
   const workouts = useQuery(api.workouts.list);
   const deleteWorkout = useMutation(api.workouts.remove);
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = async (workoutId: Id<'workouts'>) => {
-    Alert.alert('Delete Workout', 'Are you sure you want to delete this workout?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            setIsDeleting(true);
-            await deleteWorkout({ id: workoutId });
-          } catch (error) {
-            console.error('Error deleting workout:', error);
-            Alert.alert('Error', 'Failed to delete workout');
-          } finally {
-            setIsDeleting(false);
-          }
-        },
-      },
-    ]);
+    if (isDeleting) return;
+
+    confirm('Delete Workout', 'Are you sure you want to delete this workout?', async () => {
+      try {
+        setIsDeleting(true);
+        await deleteWorkout({ id: workoutId });
+      } catch (err) {
+        console.error('Error deleting workout:', err);
+        error('Failed to delete workout');
+      } finally {
+        setIsDeleting(false);
+      }
+    });
   };
 
   const handleEdit = (workoutId: Id<'workouts'>) => {

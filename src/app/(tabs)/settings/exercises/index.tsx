@@ -2,10 +2,13 @@ import { api } from 'convex/_generated/api';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+
+import { useAlert } from '~/components/AlertProvider';
 
 export default function ExercisesScreen() {
   const router = useRouter();
+  const { confirm, error } = useAlert();
   const exercises = useQuery(api.exercises.list);
   const deleteExercise = useMutation(api.exercises.remove);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -25,27 +28,17 @@ export default function ExercisesScreen() {
   }, [exercises, searchQuery]);
 
   const handleDelete = async (exerciseId: string) => {
-    Alert.alert('Delete Exercise', 'Are you sure you want to delete this exercise?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            setIsDeleting(true);
-            await deleteExercise({ id: exerciseId });
-          } catch (error) {
-            console.error('Error deleting exercise:', error);
-            Alert.alert('Error', 'Failed to delete exercise');
-          } finally {
-            setIsDeleting(false);
-          }
-        },
-      },
-    ]);
+    confirm('Delete Exercise', 'Are you sure you want to delete this exercise?', async () => {
+      try {
+        setIsDeleting(true);
+        await deleteExercise({ id: exerciseId });
+      } catch (err) {
+        console.error('Error deleting exercise:', err);
+        error('Failed to delete exercise');
+      } finally {
+        setIsDeleting(false);
+      }
+    });
   };
 
   const handleEdit = (exerciseId: string) => {

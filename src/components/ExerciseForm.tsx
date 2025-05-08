@@ -1,8 +1,9 @@
 import { useMutation } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
+import { useAlert } from './AlertProvider';
 import { api } from '../../convex/_generated/api';
 
 type ExerciseFormProps = {
@@ -17,6 +18,7 @@ type ExerciseFormProps = {
 
 export default function ExerciseForm({ mode, exerciseId, initialData }: ExerciseFormProps) {
   const router = useRouter();
+  const { error } = useAlert();
   const createExercise = useMutation(api.exercises.create);
   const updateExercise = useMutation(api.exercises.update);
 
@@ -35,7 +37,7 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
 
   const handleSubmit = async () => {
     if (!name || !category || !muscleGroup) {
-      Alert.alert('Error', 'Please fill in all fields');
+      error('Please fill in all fields');
       return;
     }
 
@@ -56,9 +58,9 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
         });
       }
       router.back();
-    } catch (error) {
-      console.error(`Error ${mode === 'add' ? 'creating' : 'updating'} exercise:`, error);
-      Alert.alert('Error', `Failed to ${mode === 'add' ? 'create' : 'update'} exercise`);
+    } catch (err) {
+      console.error(`Error ${mode === 'add' ? 'creating' : 'updating'} exercise:`, err);
+      error(`Failed to ${mode === 'add' ? 'create' : 'update'} exercise`);
     } finally {
       setIsSubmitting(false);
     }
@@ -121,4 +123,4 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
       </ScrollView>
     </View>
   );
-} 
+}

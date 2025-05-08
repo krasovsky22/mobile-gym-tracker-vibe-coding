@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AlertProvider } from '~/components/AlertProvider';
 import 'global.css';
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -23,29 +24,31 @@ export default function RootLayout() {
       <ConvexAuthProvider
         client={convex}
         storage={Platform.OS === 'android' || Platform.OS === 'ios' ? secureStorage : undefined}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen
-            name="index"
-            options={{
+        <AlertProvider>
+          <Stack
+            screenOptions={{
               headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="login"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
+            }}>
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="login"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="(tabs)"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </AlertProvider>
       </ConvexAuthProvider>
     </SafeAreaProvider>
   );

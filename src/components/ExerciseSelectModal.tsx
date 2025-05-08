@@ -4,6 +4,8 @@ import { useQuery } from 'convex/react';
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
 
+import { useAlert } from './AlertProvider';
+
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
   sets: number;
@@ -22,6 +24,7 @@ export default function ExerciseSelectModal({
   onSelect,
   selectedExercises,
 }: ExerciseSelectModalProps) {
+  const { error } = useAlert();
   const exercises = useQuery(api.exercises.list);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -31,9 +34,14 @@ export default function ExerciseSelectModal({
     }
   }, [visible]);
 
+  if (!exercises) {
+    error('Failed to load exercises');
+    return null;
+  }
+
   const selectedExerciseIds = selectedExercises.map((ex) => ex.exerciseId);
 
-  const filteredExercises = exercises?.filter(
+  const filteredExercises = exercises.filter(
     (exercise) =>
       exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
       !selectedExerciseIds.includes(exercise._id)
