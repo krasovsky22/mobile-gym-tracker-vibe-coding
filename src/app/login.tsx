@@ -3,6 +3,7 @@ import { useConvexAuth } from 'convex/react';
 import { makeRedirectUri } from 'expo-auth-session';
 import { router, useLocalSearchParams } from 'expo-router';
 import { openAuthSessionAsync } from 'expo-web-browser';
+import { useEffect } from 'react';
 import { Platform, View, Text, TouchableOpacity, Linking } from 'react-native';
 
 import { Container } from '~/components/Container';
@@ -14,11 +15,12 @@ export default function LoginScreen() {
   const { redirect } = useLocalSearchParams<{ redirect?: string }>();
   const { isAuthenticated, isLoading } = useConvexAuth();
 
-  // If already authenticated, redirect to the target page
-  if (isAuthenticated && !isLoading) {
-    router.replace(redirect || '/home');
-    return null;
-  }
+  // Handle authentication state changes
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.replace(redirect || '/home');
+    }
+  }, [isAuthenticated, isLoading, redirect]);
 
   const handleSignIn = async () => {
     try {
@@ -63,7 +65,7 @@ export default function LoginScreen() {
             </Text>
           </View>
 
-          <TouchableOpacity className="bg-primary-500 w-full rounded-lg p-4" onPress={handleSignIn}>
+          <TouchableOpacity className="w-full rounded-lg bg-primary-500 p-4" onPress={handleSignIn}>
             <Text className="text-center text-lg font-semibold text-white">
               Sign in with GitHub
             </Text>
