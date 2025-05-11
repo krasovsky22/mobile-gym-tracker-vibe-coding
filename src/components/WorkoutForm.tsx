@@ -3,10 +3,12 @@ import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
-import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { ScrollView, SafeAreaView } from 'react-native';
 
 import ExerciseSelectModal from './ExerciseSelectModal';
+import { ThemedButton } from './ThemedButton';
 import { ThemedText } from './ThemedText';
+import { ThemedTextInput } from './ThemedTextInput';
 import { ThemedView } from './ThemedView';
 import { useAlert } from '../context/alert';
 
@@ -151,110 +153,111 @@ export default function WorkoutForm({ mode, workoutId, initialData }: WorkoutFor
 
   return (
     <ThemedView className="flex-1">
-      <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
-        <TouchableOpacity
-          className="mr-4 rounded-lg bg-gray-100 px-4 py-2"
-          onPress={() => router.replace('/settings/workouts')}>
-          <ThemedText className="font-semibold text-gray-700">Back</ThemedText>
-        </TouchableOpacity>
-        <ThemedText className="text-xl font-semibold">
-          {mode === 'add' ? 'Create Workout' : 'Edit Workout'}
-        </ThemedText>
-      </ThemedView>
-
-      <ScrollView ref={scrollViewRef} className="flex-1 p-4">
-        <ThemedView className="mb-4">
-          <ThemedText className="mb-2 text-lg font-semibold">Workout Name</ThemedText>
-          <TextInput
-            className="rounded-lg border border-gray-300 p-3"
-            value={name}
-            onChangeText={setName}
-            placeholder="e.g., Upper Body Workout"
-          />
+      <SafeAreaView className="flex-1">
+        <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
+          <ThemedButton
+            variant="secondary"
+            size="md"
+            className="mr-4"
+            onPress={() => router.replace('/settings/workouts')}>
+            <ThemedText className="font-semibold text-gray-700">Back</ThemedText>
+          </ThemedButton>
+          <ThemedText className="text-xl font-semibold">
+            {mode === 'add' ? 'Create Workout' : 'Edit Workout'}
+          </ThemedText>
         </ThemedView>
 
-        <ThemedView className="mb-4">
-          <ThemedView className="mb-2 flex-row items-center justify-between">
-            <ThemedText className="text-lg font-semibold">Exercises</ThemedText>
+        <ScrollView ref={scrollViewRef} className="flex-1 p-4">
+          <ThemedView className="mb-4">
+            <ThemedText className="mb-2 text-lg font-semibold">Workout Name</ThemedText>
+            <ThemedTextInput
+              className="rounded-lg border border-gray-300 p-3"
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g., Upper Body Workout"
+            />
           </ThemedView>
 
-          {workoutExercises.map((workoutExercise, index) => {
-            const exercise = exercisesList?.find((ex) => ex._id === workoutExercise.exerciseId);
-            if (!exercise) {
-              return null; // Skip rendering if exercise is not found
-            }
-            return (
-              <ThemedView key={index} className="mb-4 rounded-lg border border-gray-200 p-4">
-                <ThemedView className="mb-2 flex-row items-center justify-between gap-2">
-                  <ThemedView className="flex flex-1 flex-row gap-1 text-lg font-semibold">
-                    <ThemedText className="flex-1">
-                      {index + 1} {exercise.name || 'No exercise selected'}
-                    </ThemedText>
-                    <ThemedText>Muscle Group</ThemedText>
-                    <ThemedText className="text-neutral-500">
-                      {exercise.muscleGroup || 'N/A'}
-                    </ThemedText>
-                  </ThemedView>
-                  <ThemedView className="flex-row">
-                    <TouchableOpacity
-                      className="mr-2 rounded-lg bg-yellow-100 px-3 py-2"
-                      onPress={() => handleEditExercise(index)}>
-                      <ThemedText className="font-semibold text-yellow-700">Edit</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      className="rounded-lg bg-red-100 px-3 py-2"
-                      onPress={() => handleRemoveExercise(index)}>
-                      <ThemedText className="font-semibold text-red-700">Remove</ThemedText>
-                    </TouchableOpacity>
-                  </ThemedView>
-                </ThemedView>
+          <ThemedView className="mb-4">
+            <ThemedView className="mb-2 flex-row items-center justify-between">
+              <ThemedText className="text-lg font-semibold">Exercises</ThemedText>
+            </ThemedView>
 
-                <ThemedView className="flex flex-row items-center gap-2">
-                  <ThemedView className="flex-1">
-                    <ThemedText className=" text-gray-600">Number of Sets</ThemedText>
+            {workoutExercises.map((workoutExercise, index) => {
+              const exercise = exercisesList?.find((ex) => ex._id === workoutExercise.exerciseId);
+              if (!exercise) {
+                return null; // Skip rendering if exercise is not found
+              }
+              return (
+                <ThemedView key={index} className="mb-4 rounded-lg border border-gray-200 p-4">
+                  <ThemedView className="mb-2 flex-row items-center justify-between gap-2">
+                    <ThemedView className="flex flex-1 flex-row gap-1 text-lg font-semibold">
+                      <ThemedText className="flex-1">
+                        {index + 1} {exercise.name || 'No exercise selected'}
+                      </ThemedText>
+                      <ThemedText>Muscle Group</ThemedText>
+                      <ThemedText className="text-neutral-500">
+                        {exercise.muscleGroup || 'N/A'}
+                      </ThemedText>
+                    </ThemedView>
+                    <ThemedView className="flex-row gap-2">
+                      <ThemedButton
+                        variant="secondary"
+                        size="sm"
+                        onPress={() => handleEditExercise(index)}>
+                        Edit
+                      </ThemedButton>
+                      <ThemedButton
+                        variant="danger"
+                        size="sm"
+                        onPress={() => handleRemoveExercise(index)}>
+                        Remove
+                      </ThemedButton>
+                    </ThemedView>
                   </ThemedView>
-                  <TextInput
-                    className="w-16 rounded-lg border border-gray-300 p-3 text-center"
-                    value={workoutExercise.sets.toString()}
-                    onChangeText={(value) =>
-                      handleUpdateExercise(index, 'sets', parseInt(value, 10) || 0)
-                    }
-                    keyboardType="numeric"
-                    maxLength={3}
-                    placeholder="e.g., 3"
-                  />
+
+                  <ThemedView className="flex flex-row items-center gap-2">
+                    <ThemedView className="flex-1">
+                      <ThemedText className="text-gray-600 ">Number of Sets</ThemedText>
+                    </ThemedView>
+                    <ThemedTextInput
+                      className="w-16 rounded-lg border border-gray-300 p-3 text-center"
+                      value={workoutExercise.sets.toString()}
+                      onChangeText={(value) =>
+                        handleUpdateExercise(index, 'sets', parseInt(value, 10) || 0)
+                      }
+                      keyboardType="numeric"
+                      maxLength={3}
+                      placeholder="e.g., 3"
+                    />
+                  </ThemedView>
                 </ThemedView>
-              </ThemedView>
-            );
-          })}
+              );
+            })}
+          </ThemedView>
+        </ScrollView>
+
+        <ThemedView className="space-y-4 p-4">
+          <ThemedButton variant="primary" onPress={handleAddExercise}>
+            Add Exercise
+          </ThemedButton>
         </ThemedView>
-      </ScrollView>
 
-      <ThemedView className="space-y-4 p-4">
-        <TouchableOpacity className="rounded-lg bg-blue-500 px-3 py-2" onPress={handleAddExercise}>
-          <ThemedText className="text-center font-semibold text-white">Add Exercise</ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
-
-      <ThemedView className="space-y-4 border-t border-gray-200 bg-white p-4">
-        <TouchableOpacity
-          className={`rounded-lg p-4 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-500'}`}
-          onPress={handleSubmit}
-          disabled={isSubmitting}>
-          <ThemedText className="text-center font-semibold text-white">
+        <ThemedView className="space-y-4 border-t border-gray-200 bg-white p-4">
+          <ThemedButton variant="primary" onPress={handleSubmit} disabled={isSubmitting}>
             {isSubmitting
               ? `${mode === 'add' ? 'Creating' : 'Updating'}...`
               : `${mode === 'add' ? 'Create' : 'Update'} Workout`}
-          </ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
+          </ThemedButton>
+        </ThemedView>
 
-      <ExerciseSelectModal
-        visible={showExerciseDialog}
-        onClose={() => setShowExerciseDialog(false)}
-        onSelect={handleSelectExercise}
-        selectedExercises={workoutExercises}
-      />
+        <ExerciseSelectModal
+          visible={showExerciseDialog}
+          onClose={() => setShowExerciseDialog(false)}
+          onSelect={handleSelectExercise}
+          selectedExercises={workoutExercises}
+        />
+      </SafeAreaView>
     </ThemedView>
   );
 }

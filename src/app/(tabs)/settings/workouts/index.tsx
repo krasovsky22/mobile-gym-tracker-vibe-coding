@@ -3,9 +3,11 @@ import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { ScrollView, SafeAreaView } from 'react-native';
 
+import { ThemedButton } from '~/components/ThemedButton';
 import { ThemedText } from '~/components/ThemedText';
+import { ThemedTextInput } from '~/components/ThemedTextInput';
 import { ThemedView } from '~/components/ThemedView';
 import { useAlert } from '~/context/alert';
 
@@ -57,8 +59,7 @@ export default function WorkoutsScreen() {
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
         <ThemedView className="p-4">
-          <TextInput
-            className="rounded-lg border border-gray-200 p-3"
+          <ThemedTextInput
             placeholder="Search workouts..."
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -83,17 +84,18 @@ export default function WorkoutsScreen() {
                   </ThemedText>
                 </ThemedView>
                 <ThemedView className="flex-row items-center gap-1 space-x-2">
-                  <TouchableOpacity
-                    className="rounded-lg bg-gray-200 px-3 py-2"
+                  <ThemedButton
+                    variant="secondary"
+                    size="sm"
                     onPress={() => handleEdit(workout._id)}>
-                    <ThemedText className="font-semibold text-gray-700">Edit</ThemedText>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    className="rounded-lg bg-red-100 px-3 py-2"
-                    onPress={() => handleDelete(workout._id)}
-                    disabled={isDeleting}>
-                    <ThemedText className="font-semibold text-red-700">Delete</ThemedText>
-                  </TouchableOpacity>
+                    Edit
+                  </ThemedButton>
+                  <ThemedButton
+                    variant="danger"
+                    size="sm"
+                    onPress={() => handleDelete(workout._id)}>
+                    Delete
+                  </ThemedButton>
                 </ThemedView>
               </ThemedView>
             </ThemedView>
@@ -101,13 +103,9 @@ export default function WorkoutsScreen() {
         </ScrollView>
 
         <ThemedView className="border-t border-gray-200 bg-white p-4">
-          <TouchableOpacity
-            className="rounded-lg bg-blue-500 p-4"
-            onPress={() => router.push('/settings/workouts/add')}>
-            <ThemedText className="text-center font-semibold text-white">
-              Create New Workout
-            </ThemedText>
-          </TouchableOpacity>
+          <ThemedButton variant="primary" onPress={() => router.push('/settings/workouts/create')}>
+            Create Workout
+          </ThemedButton>
         </ThemedView>
       </SafeAreaView>
     </ThemedView>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 import { ThemedText } from './ThemedText';
@@ -6,7 +7,7 @@ interface ThemedButtonProps extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
-  children: string;
+  children: React.ReactNode;
 }
 
 const variantStyles = {
