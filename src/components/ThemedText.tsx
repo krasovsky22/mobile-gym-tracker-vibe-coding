@@ -1,6 +1,6 @@
 import { Text, TextProps } from 'react-native';
 
-import { useTheme } from './ThemeProvider';
+import { useTheme } from '../context/theme';
 
 type ThemedTextProps = TextProps & {
   className?: string;

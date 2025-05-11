@@ -5,8 +5,8 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { AlertProvider } from '~/components/AlertProvider';
-import { ThemeProvider } from '~/components/ThemeProvider';
+import { AlertProvider } from '~/context/alert';
+import { ThemeProvider } from '~/context/theme';
 import 'global.css';
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {

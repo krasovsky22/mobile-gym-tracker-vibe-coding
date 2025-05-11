@@ -4,13 +4,13 @@ import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
 import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
-import { useAlert } from '~/components/AlertProvider';
 import { ThemedText } from '~/components/ThemedText';
 import { ThemedView } from '~/components/ThemedView';
+import { useAlert } from '~/context/alert';
 
 export default function ExercisesScreen() {
   const router = useRouter();
-  const { error } = useAlert();
+  const { error, alert } = useAlert();
   const exercises = useQuery(api.exercises.list);
   const deleteExercise = useMutation(api.exercises.remove);
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,7 +26,7 @@ export default function ExercisesScreen() {
 
   const handleDelete = (exerciseId: string) => {
     setIsDeleting(true);
-    error('Are you sure you want to delete this exercise?', 'Confirm Delete', [
+    alert('Are you sure you want to delete this exercise?', 'Confirm Delete', [
       { text: 'Cancel', style: 'cancel', onPress: () => setIsDeleting(false) },
       {
         text: 'Delete',

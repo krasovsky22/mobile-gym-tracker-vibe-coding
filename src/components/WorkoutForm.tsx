@@ -5,10 +5,10 @@ import { useRouter } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
 import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
-import { useAlert } from './AlertProvider';
 import ExerciseSelectModal from './ExerciseSelectModal';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
+import { useAlert } from '../context/alert';
 
 export type WorkoutExercise = {
   exerciseId: Id<'exercises'>;

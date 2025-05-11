@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Switch } from 'react-native';
 
-import { useTheme } from '~/components/ThemeProvider';
 import { ThemedText } from '~/components/ThemedText';
 import { ThemedView } from '~/components/ThemedView';
+import { useTheme } from '~/context/theme';
 
 export default function PreferencesScreen() {
   const { isDarkMode, toggleDarkMode } = useTheme();

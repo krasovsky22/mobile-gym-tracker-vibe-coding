@@ -5,9 +5,9 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
-import { useAlert } from '~/components/AlertProvider';
 import { ThemedText } from '~/components/ThemedText';
 import { ThemedView } from '~/components/ThemedView';
+import { useAlert } from '~/context/alert';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;

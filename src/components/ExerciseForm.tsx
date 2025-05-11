@@ -3,10 +3,10 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
-import { useAlert } from './AlertProvider';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
 import { api } from '../../convex/_generated/api';
+import { useAlert } from '../context/alert';
 
 type ExerciseFormProps = {
   mode: 'add' | 'edit';
