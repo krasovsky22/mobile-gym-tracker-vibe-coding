@@ -17,7 +17,7 @@ export default function SettingsScreen() {
           <ThemedText className="text-center text-2xl font-bold">Settings</ThemedText>
         </ThemedView>
 
-        <ThemedView className="space-y-4">
+        <ThemedView className="gap-5 space-y-4">
           <TouchableOpacity
             className="rounded-lg border border-gray-200 p-4"
             onPress={() => router.push('/settings/exercises')}>
