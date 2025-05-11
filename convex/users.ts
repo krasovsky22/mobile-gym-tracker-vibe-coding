@@ -2,7 +2,7 @@ import { getAuthUserId } from '@convex-dev/auth/server';
 
 import { mutation, query } from './_generated/server';
 
-async function getCurrentSignedInUser(ctx: any) {
+export async function getUserId(ctx: any) {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
     throw new Error('Not authenticated');
@@ -12,6 +12,12 @@ async function getCurrentSignedInUser(ctx: any) {
   if (!userId) {
     throw new Error('Not authenticated');
   }
+
+  return userId;
+}
+
+async function getCurrentSignedInUser(ctx: any) {
+  const userId = await getUserId(ctx);
 
   const user = await ctx.db.get(userId);
   if (!user) {

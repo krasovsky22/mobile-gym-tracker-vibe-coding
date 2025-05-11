@@ -22,7 +22,13 @@ const schema = defineSchema({
       })
     ),
   }),
-  // Your other tables...
+  userPreferences: defineTable({
+    userId: v.id('users'),
+    isDarkMode: v.boolean(),
+    notifications: v.boolean(),
+    soundEffects: v.boolean(),
+    updatedAt: v.number(),
+  }).index('by_user', ['userId']),
 });
 
 export default schema;

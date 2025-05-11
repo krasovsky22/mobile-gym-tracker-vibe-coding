@@ -78,7 +78,7 @@ export default function WorkoutsScreen() {
                   {workout.exercises.reduce((sum: number, ex: WorkoutExercise) => sum + ex.sets, 0)}
                 </ThemedText>
               </ThemedView>
-              <ThemedView className="flex-row items-center gap-1 space-x-3">
+              <ThemedView className="flex-row items-center gap-1 space-x-2">
                 <TouchableOpacity
                   className="rounded-lg bg-gray-200 px-3 py-2"
                   onPress={() => handleEdit(workout._id)}>

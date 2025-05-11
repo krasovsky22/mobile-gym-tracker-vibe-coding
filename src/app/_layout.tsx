@@ -21,10 +21,10 @@ const secureStorage = {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <ConvexAuthProvider
-        client={convex}
-        storage={Platform.OS === 'android' || Platform.OS === 'ios' ? secureStorage : undefined}>
+    <ConvexAuthProvider
+      client={convex}
+      storage={Platform.OS === 'android' || Platform.OS === 'ios' ? secureStorage : undefined}>
+      <ThemeProvider>
         <SafeAreaProvider>
           <AlertProvider>
             <Stack
@@ -52,7 +52,7 @@ export default function RootLayout() {
             </Stack>
           </AlertProvider>
         </SafeAreaProvider>
-      </ConvexAuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </ConvexAuthProvider>
   );
 }
