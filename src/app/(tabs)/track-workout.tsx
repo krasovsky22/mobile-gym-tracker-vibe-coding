@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 
 import { ProtectedRoute } from '~/components/ProtectedRoute';
 import { ThemedText, ThemedView } from '~/theme';
