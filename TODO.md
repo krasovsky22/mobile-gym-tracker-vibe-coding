@@ -13,6 +13,7 @@
 
 
 ## Low Priority
+- [ ] AI workout generator based on current exercises in database
 - [ ] Update README.md with project setup instructions
 - [ ] Optimize images in `assets/` folder
 
