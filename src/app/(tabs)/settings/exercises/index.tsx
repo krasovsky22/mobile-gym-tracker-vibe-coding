@@ -71,7 +71,7 @@ export default function ExercisesScreen() {
                   Muscle Group: {exercise.muscleGroup}
                 </ThemedText>
               </ThemedView>
-              <ThemedView className="flex-row space-x-2">
+              <ThemedView className="flex-row items-center gap-2 space-x-2">
                 <TouchableOpacity
                   className="rounded-lg bg-gray-200 px-3 py-2"
                   onPress={() => handleEdit(exercise._id)}>
