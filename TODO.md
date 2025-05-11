@@ -1,12 +1,16 @@
 # TODO List
 
 ## High Priority
-- [ ] Delete workout button functionality and ui updates
+- [ ] Create Track User Workout Page
+- [ ] Create page to show prev workouts
 - [ ] Create workout tracking functionality in `src/app/(tabs)/track-workout.tsx`
 
 ## Medium Priority
-- [ ] Design a user preferences page in `src/app/(tabs)/settings/preferences.tsx`
-- [ ] Improve the UI for exercise selection in `src/components/ExerciseSelectModal.tsx`
+- [ ] Add google login provider
+- [ ] Add facebook login provider
+- [ ] Muscle groups should be stored and keep svg highlighted sections
+- [ ] On exercise edit page should ave visualization of effected muscle groups
+
 
 ## Low Priority
 - [ ] Update README.md with project setup instructions
