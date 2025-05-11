@@ -2,13 +2,10 @@ import { api } from 'convex/_generated/api';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
-import { TextInput, ScrollView, SafeAreaView } from 'react-native';
+import { ScrollView, SafeAreaView } from 'react-native';
 
-import { ThemedButton } from '~/components/ThemedButton';
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedTextInput } from '~/components/ThemedTextInput';
-import { ThemedView } from '~/components/ThemedView';
 import { useAlert } from '~/context/alert';
+import { ThemedText, ThemedTextInput, ThemedView, ThemedButton } from '~/theme';
 
 export default function ExercisesScreen() {
   const router = useRouter();

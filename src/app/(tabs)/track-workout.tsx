@@ -1,8 +1,7 @@
 import { View, Text } from 'react-native';
 
 import { ProtectedRoute } from '~/components/ProtectedRoute';
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedView } from '~/components/ThemedView';
+import { ThemedText, ThemedView } from '~/theme';
 
 export default function TrackWorkoutScreen() {
   return (

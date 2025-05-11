@@ -5,11 +5,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, SafeAreaView } from 'react-native';
 
-import { ThemedButton } from '~/components/ThemedButton';
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedTextInput } from '~/components/ThemedTextInput';
-import { ThemedView } from '~/components/ThemedView';
 import { useAlert } from '~/context/alert';
+import { ThemedText, ThemedButton, ThemedView, ThemedTextInput } from '~/theme';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;

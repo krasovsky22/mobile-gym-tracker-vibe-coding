@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { SafeAreaView, Switch } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedView } from '~/components/ThemedView';
 import { useTheme } from '~/context/theme';
+import { ThemedText, ThemedView } from '~/theme';
 
 export default function PreferencesScreen() {
   const { isDarkMode, toggleDarkMode } = useTheme();

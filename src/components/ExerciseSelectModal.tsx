@@ -4,9 +4,9 @@ import { useQuery } from 'convex/react';
 import { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
 
-import { ThemedText } from './ThemedText';
-import { ThemedView } from './ThemedView';
 import { useAlert } from '../context/alert';
+
+import { ThemedText, ThemedView } from '~/theme';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;

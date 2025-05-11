@@ -7,8 +7,7 @@ import { useEffect } from 'react';
 import { Platform, TouchableOpacity, Linking } from 'react-native';
 
 import { Container } from '~/components/Container';
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedView } from '~/components/ThemedView';
+import { ThemedText, ThemedView } from '~/theme';
 
 const redirectTo = makeRedirectUri();
 

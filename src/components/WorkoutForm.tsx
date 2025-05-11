@@ -6,11 +6,9 @@ import { useState, useEffect, useRef } from 'react';
 import { ScrollView, SafeAreaView } from 'react-native';
 
 import ExerciseSelectModal from './ExerciseSelectModal';
-import { ThemedButton } from './ThemedButton';
-import { ThemedText } from './ThemedText';
-import { ThemedTextInput } from './ThemedTextInput';
-import { ThemedView } from './ThemedView';
 import { useAlert } from '../context/alert';
+
+import { ThemedButton, ThemedText, ThemedTextInput, ThemedView } from '~/theme';
 
 export type WorkoutExercise = {
   exerciseId: Id<'exercises'>;

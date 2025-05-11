@@ -3,8 +3,7 @@ import { useConvexAuth, useQuery } from 'convex/react';
 import { SafeAreaView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedView } from '~/components/ThemedView';
+import { ThemedText, ThemedView } from '~/theme';
 
 export default function AccountSettingsScreen() {
   const { isAuthenticated } = useConvexAuth();

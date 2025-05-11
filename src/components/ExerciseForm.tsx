@@ -5,11 +5,8 @@ import { ScrollView, SafeAreaView } from 'react-native';
 
 import { api } from '../../convex/_generated/api';
 
-import { ThemedButton } from '~/components/ThemedButton';
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedTextInput } from '~/components/ThemedTextInput';
-import { ThemedView } from '~/components/ThemedView';
 import { useAlert } from '~/context/alert';
+import { ThemedButton, ThemedText, ThemedTextInput, ThemedView } from '~/theme';
 
 type ExerciseFormProps = {
   mode: 'add' | 'edit';

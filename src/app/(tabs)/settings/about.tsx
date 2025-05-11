@@ -1,7 +1,6 @@
 import { Linking, TouchableOpacity } from 'react-native';
 
-import { ThemedText } from '~/components/ThemedText';
-import { ThemedView } from '~/components/ThemedView';
+import { ThemedText, ThemedView } from '~/theme';
 
 export default function AboutScreen() {
   const handleOpenGitHub = () => {
