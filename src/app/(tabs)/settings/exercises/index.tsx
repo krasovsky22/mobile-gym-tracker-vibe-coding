@@ -2,9 +2,11 @@ import { api } from 'convex/_generated/api';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
-import { TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { TextInput, ScrollView, SafeAreaView } from 'react-native';
 
+import { ThemedButton } from '~/components/ThemedButton';
 import { ThemedText } from '~/components/ThemedText';
+import { ThemedTextInput } from '~/components/ThemedTextInput';
 import { ThemedView } from '~/components/ThemedView';
 import { useAlert } from '~/context/alert';
 
@@ -53,11 +55,10 @@ export default function ExercisesScreen() {
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
         <ThemedView className="p-4">
-          <TextInput
-            className="rounded-lg border border-gray-200 p-3"
-            placeholder="Search exercises..."
+          <ThemedTextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
+            placeholder="Search exercises..."
           />
         </ThemedView>
 
@@ -75,21 +76,19 @@ export default function ExercisesScreen() {
                   </ThemedText>
                 </ThemedView>
                 <ThemedView className="flex-row items-center gap-2 space-x-2">
-                  <TouchableOpacity
-                    className="rounded-lg bg-blue-500/10 px-3 py-2 dark:bg-blue-500/20"
+                  <ThemedButton
+                    variant="secondary"
+                    size="sm"
                     onPress={() => handleEdit(exercise._id)}>
-                    <ThemedText className="font-semibold text-blue-700 dark:text-blue-300">
-                      Edit
-                    </ThemedText>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    className="rounded-lg bg-red-500/10 px-3 py-2 dark:bg-red-500/20"
+                    Edit
+                  </ThemedButton>
+                  <ThemedButton
+                    variant="danger"
+                    size="sm"
                     onPress={() => handleDelete(exercise._id)}
                     disabled={isDeleting}>
-                    <ThemedText className="font-semibold text-red-700 dark:text-red-300">
-                      Delete
-                    </ThemedText>
-                  </TouchableOpacity>
+                    Delete
+                  </ThemedButton>
                 </ThemedView>
               </ThemedView>
             </ThemedView>
@@ -97,13 +96,13 @@ export default function ExercisesScreen() {
         </ScrollView>
 
         <ThemedView className="bg-white p-4 dark:bg-neutral-800">
-          <TouchableOpacity
-            className="rounded-lg bg-blue-500 p-4"
+          <ThemedButton
+            variant="primary"
+            size="lg"
+            fullWidth
             onPress={() => router.push('/settings/exercises/add')}>
-            <ThemedText className="text-center font-semibold text-white">
-              Add New Exercise
-            </ThemedText>
-          </TouchableOpacity>
+            Add New Exercise
+          </ThemedButton>
         </ThemedView>
       </SafeAreaView>
     </ThemedView>
