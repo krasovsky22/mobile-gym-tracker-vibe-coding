@@ -19,7 +19,7 @@ export default function PreferencesScreen() {
             <ThemedText className="text-2xl font-bold">Preferences</ThemedText>
           </ThemedView>
 
-          <ThemedView className="space-y-4">
+          <ThemedView className="gap-5 space-y-4">
             <ThemedView className="rounded-lg border border-gray-200 p-4">
               <ThemedView className="flex-row items-center justify-between">
                 <ThemedView>
