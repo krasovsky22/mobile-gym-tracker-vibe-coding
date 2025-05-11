@@ -63,7 +63,7 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
-        <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
+        <ThemedView className="flex-row items-center p-4 border-b border-gray-200">
           <ThemedButton
             variant="secondary"
             size="md"

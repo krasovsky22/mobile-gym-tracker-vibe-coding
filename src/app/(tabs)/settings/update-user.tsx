@@ -1,7 +1,6 @@
 import { View, Text } from 'react-native';
 
-import { Header } from '~/components/Header';
-import { ProtectedRoute } from '~/components/ProtectedRoute';
+import { Header, ProtectedRoute } from '~/components';
 
 export default function UpdateUserScreen() {
   return (
@@ -12,11 +11,9 @@ export default function UpdateUserScreen() {
           <Text className="mb-4 text-center text-3xl font-bold text-neutral-900">
             Update Profile
           </Text>
-          <Text className="text-center text-neutral-600">
-            Update your personal information
-          </Text>
+          <Text className="text-center text-neutral-600">Update your personal information</Text>
         </View>
       </View>
     </ProtectedRoute>
   );
-} 
+}

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ProtectedRoute } from '~/components/ProtectedRoute';
+import { ProtectedRoute } from '~/components';
 import { useTheme } from '~/context/theme';
 
 export default function TabLayout() {

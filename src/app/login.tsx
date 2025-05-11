@@ -6,7 +6,7 @@ import { openAuthSessionAsync } from 'expo-web-browser';
 import { useEffect } from 'react';
 import { Platform, TouchableOpacity, Linking } from 'react-native';
 
-import { Container } from '~/components/Container';
+import { Container } from '~/components';
 import { ThemedText, ThemedView } from '~/theme';
 
 const redirectTo = makeRedirectUri();

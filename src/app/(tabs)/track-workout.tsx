@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import { ProtectedRoute } from '~/components/ProtectedRoute';
+import { ProtectedRoute } from '~/components';
 import { ThemedText, ThemedView } from '~/theme';
 
 export default function TrackWorkoutScreen() {
