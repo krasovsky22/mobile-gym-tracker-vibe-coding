@@ -1,9 +1,9 @@
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 
 export default function SettingsWorkoutsLayout() {
   return (
-    <View className="mt-6 flex-1 bg-white">
+    <SafeAreaView className="flex-1">
       <Stack
         screenOptions={{
           headerShown: false,
@@ -16,6 +16,6 @@ export default function SettingsWorkoutsLayout() {
           },
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 }

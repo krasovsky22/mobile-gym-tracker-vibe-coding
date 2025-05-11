@@ -34,7 +34,13 @@ export default function ExerciseSelectModal({
     }
   }, [visible]);
 
-  if (!exercises) {
+  // Add loading state handling
+  if (exercises === undefined) {
+    return null; // Still loading
+  }
+
+  // Only show error if we get null after loading (actual error)
+  if (exercises === null) {
     error('Failed to load exercises');
     return null;
   }
