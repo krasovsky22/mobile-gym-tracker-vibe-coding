@@ -1,9 +1,10 @@
 import { Stack } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function SettingsExercisesLayout() {
   return (
-    <SafeAreaView className="flex-1 bg-white ">
+    <SafeAreaProvider className="flex-1 bg-white ">
       <Stack
         screenOptions={{
           headerShown: false,
@@ -16,6 +17,6 @@ export default function SettingsExercisesLayout() {
           },
         }}
       />
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

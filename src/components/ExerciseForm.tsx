@@ -1,7 +1,7 @@
 import { useMutation } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
@@ -62,59 +62,61 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
 
   return (
     <ThemedView className="flex-1">
-      <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
-        <TouchableOpacity
-          className="mr-4 rounded-lg bg-gray-100 px-4 py-2"
-          onPress={() => router.back()}>
-          <ThemedText className="font-semibold text-gray-700">Back</ThemedText>
-        </TouchableOpacity>
-        <ThemedText className="text-xl font-semibold">
-          {mode === 'add' ? 'Add Exercise' : 'Edit Exercise'}
-        </ThemedText>
-      </ThemedView>
-
-      <ScrollView className="flex-1 p-4">
-        <ThemedView className="mb-4">
-          <ThemedText className="mb-2 text-lg font-semibold">Exercise Name</ThemedText>
-          <TextInput
-            className="rounded-lg border border-gray-300 p-3"
-            value={name}
-            onChangeText={setName}
-            placeholder="e.g., Bench Press"
-          />
-        </ThemedView>
-
-        <ThemedView className="mb-4">
-          <ThemedText className="mb-2 text-lg font-semibold">Category</ThemedText>
-          <TextInput
-            className="rounded-lg border border-gray-300 p-3"
-            value={category}
-            onChangeText={setCategory}
-            placeholder="e.g., Strength"
-          />
-        </ThemedView>
-
-        <ThemedView className="mb-4">
-          <ThemedText className="mb-2 text-lg font-semibold">Muscle Group</ThemedText>
-          <TextInput
-            className="rounded-lg border border-gray-300 p-3"
-            value={muscleGroup}
-            onChangeText={setMuscleGroup}
-            placeholder="e.g., Chest"
-          />
-        </ThemedView>
-
-        <TouchableOpacity
-          className={`mt-6 rounded-lg p-4 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-500'}`}
-          onPress={handleSubmit}
-          disabled={isSubmitting}>
-          <ThemedText className="text-center font-semibold text-white">
-            {isSubmitting
-              ? `${mode === 'add' ? 'Creating' : 'Updating'}...`
-              : `${mode === 'add' ? 'Create' : 'Update'} Exercise`}
+      <SafeAreaView className="flex-1">
+        <ThemedView className="flex-row items-center p-4 border-b border-gray-200">
+          <TouchableOpacity
+            className="px-4 py-2 mr-4 bg-gray-100 rounded-lg"
+            onPress={() => router.back()}>
+            <ThemedText className="font-semibold text-gray-700">Back</ThemedText>
+          </TouchableOpacity>
+          <ThemedText className="text-xl font-semibold">
+            {mode === 'add' ? 'Add Exercise' : 'Edit Exercise'}
           </ThemedText>
-        </TouchableOpacity>
-      </ScrollView>
+        </ThemedView>
+
+        <ScrollView className="flex-1 p-4">
+          <ThemedView className="mb-4">
+            <ThemedText className="mb-2 text-lg font-semibold">Exercise Name</ThemedText>
+            <TextInput
+              className="p-3 border border-gray-300 rounded-lg"
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g., Bench Press"
+            />
+          </ThemedView>
+
+          <ThemedView className="mb-4">
+            <ThemedText className="mb-2 text-lg font-semibold">Category</ThemedText>
+            <TextInput
+              className="p-3 border border-gray-300 rounded-lg"
+              value={category}
+              onChangeText={setCategory}
+              placeholder="e.g., Strength"
+            />
+          </ThemedView>
+
+          <ThemedView className="mb-4">
+            <ThemedText className="mb-2 text-lg font-semibold">Muscle Group</ThemedText>
+            <TextInput
+              className="p-3 border border-gray-300 rounded-lg"
+              value={muscleGroup}
+              onChangeText={setMuscleGroup}
+              placeholder="e.g., Chest"
+            />
+          </ThemedView>
+
+          <TouchableOpacity
+            className={`mt-6 rounded-lg p-4 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-500'}`}
+            onPress={handleSubmit}
+            disabled={isSubmitting}>
+            <ThemedText className="font-semibold text-center text-white">
+              {isSubmitting
+                ? `${mode === 'add' ? 'Creating' : 'Updating'}...`
+                : `${mode === 'add' ? 'Create' : 'Update'} Exercise`}
+            </ThemedText>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
     </ThemedView>
   );
 }

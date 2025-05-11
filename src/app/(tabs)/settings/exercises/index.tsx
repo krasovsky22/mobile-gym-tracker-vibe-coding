@@ -2,7 +2,7 @@ import { api } from 'convex/_generated/api';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
-import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 
 import { ThemedText } from '~/components/ThemedText';
 import { ThemedView } from '~/components/ThemedView';
@@ -51,51 +51,61 @@ export default function ExercisesScreen() {
 
   return (
     <ThemedView className="flex-1">
-      <ThemedView className="p-4">
-        <TextInput
-          className="rounded-lg border border-gray-200 p-3"
-          placeholder="Search exercises..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </ThemedView>
+      <SafeAreaView className="flex-1">
+        <ThemedView className="p-4">
+          <TextInput
+            className="rounded-lg border border-gray-200 p-3"
+            placeholder="Search exercises..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </ThemedView>
 
-      <ScrollView className="flex-1 px-4">
-        {filteredExercises.map((exercise) => (
-          <ThemedView key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
-            <ThemedView className="flex-row justify-between">
-              <ThemedView className="flex-1">
-                <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
-                <ThemedText className="text-neutral-500">Category: {exercise.category}</ThemedText>
-                <ThemedText className="text-neutral-500">
-                  Muscle Group: {exercise.muscleGroup}
-                </ThemedText>
-              </ThemedView>
-              <ThemedView className="flex-row items-center gap-2 space-x-2">
-                <TouchableOpacity
-                  className="rounded-lg bg-gray-200 px-3 py-2"
-                  onPress={() => handleEdit(exercise._id)}>
-                  <ThemedText className="font-semibold text-gray-700">Edit</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  className="rounded-lg bg-red-100 px-3 py-2"
-                  onPress={() => handleDelete(exercise._id)}
-                  disabled={isDeleting}>
-                  <ThemedText className="font-semibold text-red-700">Delete</ThemedText>
-                </TouchableOpacity>
+        <ScrollView className="flex-1 px-4">
+          {filteredExercises.map((exercise) => (
+            <ThemedView key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
+              <ThemedView className="flex-row justify-between">
+                <ThemedView className="flex-1">
+                  <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
+                  <ThemedText className="text-neutral-500">
+                    Category: {exercise.category}
+                  </ThemedText>
+                  <ThemedText className="text-neutral-500">
+                    Muscle Group: {exercise.muscleGroup}
+                  </ThemedText>
+                </ThemedView>
+                <ThemedView className="flex-row items-center gap-2 space-x-2">
+                  <TouchableOpacity
+                    className="rounded-lg bg-blue-500/10 px-3 py-2 dark:bg-blue-500/20"
+                    onPress={() => handleEdit(exercise._id)}>
+                    <ThemedText className="font-semibold text-blue-700 dark:text-blue-300">
+                      Edit
+                    </ThemedText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    className="rounded-lg bg-red-500/10 px-3 py-2 dark:bg-red-500/20"
+                    onPress={() => handleDelete(exercise._id)}
+                    disabled={isDeleting}>
+                    <ThemedText className="font-semibold text-red-700 dark:text-red-300">
+                      Delete
+                    </ThemedText>
+                  </TouchableOpacity>
+                </ThemedView>
               </ThemedView>
             </ThemedView>
-          </ThemedView>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
 
-      <ThemedView className="bg-white p-4">
-        <TouchableOpacity
-          className="rounded-lg bg-blue-500 p-4"
-          onPress={() => router.push('/settings/exercises/add')}>
-          <ThemedText className="text-center font-semibold text-white">Add New Exercise</ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
+        <ThemedView className="bg-white p-4 dark:bg-neutral-800">
+          <TouchableOpacity
+            className="rounded-lg bg-blue-500 p-4"
+            onPress={() => router.push('/settings/exercises/add')}>
+            <ThemedText className="text-center font-semibold text-white">
+              Add New Exercise
+            </ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+      </SafeAreaView>
     </ThemedView>
   );
 }
