@@ -22,7 +22,7 @@ export default function AccountSettingsScreen() {
             <ThemedText className="text-2xl font-bold">Account Settings</ThemedText>
           </ThemedView>
 
-          <ThemedView className="space-y-4">
+          <ThemedView className="gap-5 space-y-4">
             <ThemedView className="rounded-lg border border-gray-200 p-4">
               <ThemedText className="text-lg font-semibold">Profile</ThemedText>
               <ThemedText className="text-neutral-500">Email: {user.email}</ThemedText>
