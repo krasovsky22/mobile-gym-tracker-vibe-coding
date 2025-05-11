@@ -4,9 +4,11 @@ import { makeRedirectUri } from 'expo-auth-session';
 import { router, useLocalSearchParams } from 'expo-router';
 import { openAuthSessionAsync } from 'expo-web-browser';
 import { useEffect } from 'react';
-import { Platform, View, Text, TouchableOpacity, Linking } from 'react-native';
+import { Platform, TouchableOpacity, Linking } from 'react-native';
 
 import { Container } from '~/components/Container';
+import { ThemedText } from '~/components/ThemedText';
+import { ThemedView } from '~/components/ThemedView';
 
 const redirectTo = makeRedirectUri();
 
@@ -54,24 +56,24 @@ export default function LoginScreen() {
 
   return (
     <Container>
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <View className="w-full max-w-sm space-y-6 px-4">
-          <View className="space-y-2">
-            <Text className="text-center text-3xl font-bold text-neutral-900">
+      <ThemedView className="flex-1 items-center justify-center">
+        <ThemedView className="w-full max-w-sm space-y-6 px-4">
+          <ThemedView className="space-y-2">
+            <ThemedText className="text-center text-3xl font-bold">
               Welcome to Gym Tracker
-            </Text>
-            <Text className="text-center text-neutral-600">
+            </ThemedText>
+            <ThemedText className="text-center text-neutral-500">
               Track your workouts and achieve your fitness goals
-            </Text>
-          </View>
+            </ThemedText>
+          </ThemedView>
 
           <TouchableOpacity className="w-full rounded-lg bg-primary-500 p-4" onPress={handleSignIn}>
-            <Text className="text-center text-lg font-semibold text-white">
+            <ThemedText className="text-center text-lg font-semibold text-white">
               Sign in with GitHub
-            </Text>
+            </ThemedText>
           </TouchableOpacity>
-        </View>
-      </View>
+        </ThemedView>
+      </ThemedView>
     </Container>
   );
 }

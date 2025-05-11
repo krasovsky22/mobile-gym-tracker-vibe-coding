@@ -1,9 +1,11 @@
 import { useMutation } from 'convex/react';
 import { useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
 import { useAlert } from './AlertProvider';
+import { ThemedText } from './ThemedText';
+import { ThemedView } from './ThemedView';
 import { api } from '../../convex/_generated/api';
 
 type ExerciseFormProps = {
@@ -19,30 +21,22 @@ type ExerciseFormProps = {
 export default function ExerciseForm({ mode, exerciseId, initialData }: ExerciseFormProps) {
   const router = useRouter();
   const { error } = useAlert();
+  const [name, setName] = useState(initialData?.name ?? '');
+  const [category, setCategory] = useState(initialData?.category ?? '');
+  const [muscleGroup, setMuscleGroup] = useState(initialData?.muscleGroup ?? '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const createExercise = useMutation(api.exercises.create);
   const updateExercise = useMutation(api.exercises.update);
 
-  const [name, setName] = useState(initialData?.name || '');
-  const [category, setCategory] = useState(initialData?.category || '');
-  const [muscleGroup, setMuscleGroup] = useState(initialData?.muscleGroup || '');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (initialData) {
-      setName(initialData.name);
-      setCategory(initialData.category);
-      setMuscleGroup(initialData.muscleGroup);
-    }
-  }, [initialData]);
-
   const handleSubmit = async () => {
     if (!name || !category || !muscleGroup) {
-      error('Please fill in all fields');
-      return;
+      return error('Please fill in all fields');
     }
 
+    setIsSubmitting(true);
+
     try {
-      setIsSubmitting(true);
       if (mode === 'add') {
         await createExercise({
           name,
@@ -67,60 +61,60 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
   };
 
   return (
-    <View className="flex-1 bg-white">
-      <View className="flex-row items-center border-b border-gray-200 p-4">
+    <ThemedView className="flex-1">
+      <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
         <TouchableOpacity
           className="mr-4 rounded-lg bg-gray-100 px-4 py-2"
           onPress={() => router.back()}>
-          <Text className="font-semibold text-gray-700">Back</Text>
+          <ThemedText className="font-semibold text-gray-700">Back</ThemedText>
         </TouchableOpacity>
-        <Text className="text-xl font-semibold">
+        <ThemedText className="text-xl font-semibold">
           {mode === 'add' ? 'Add Exercise' : 'Edit Exercise'}
-        </Text>
-      </View>
+        </ThemedText>
+      </ThemedView>
 
       <ScrollView className="flex-1 p-4">
-        <View className="mb-4">
-          <Text className="mb-2 text-lg font-semibold">Exercise Name</Text>
+        <ThemedView className="mb-4">
+          <ThemedText className="mb-2 text-lg font-semibold">Exercise Name</ThemedText>
           <TextInput
             className="rounded-lg border border-gray-300 p-3"
             value={name}
             onChangeText={setName}
             placeholder="e.g., Bench Press"
           />
-        </View>
+        </ThemedView>
 
-        <View className="mb-4">
-          <Text className="mb-2 text-lg font-semibold">Category</Text>
+        <ThemedView className="mb-4">
+          <ThemedText className="mb-2 text-lg font-semibold">Category</ThemedText>
           <TextInput
             className="rounded-lg border border-gray-300 p-3"
             value={category}
             onChangeText={setCategory}
             placeholder="e.g., Strength"
           />
-        </View>
+        </ThemedView>
 
-        <View className="mb-4">
-          <Text className="mb-2 text-lg font-semibold">Muscle Group</Text>
+        <ThemedView className="mb-4">
+          <ThemedText className="mb-2 text-lg font-semibold">Muscle Group</ThemedText>
           <TextInput
             className="rounded-lg border border-gray-300 p-3"
             value={muscleGroup}
             onChangeText={setMuscleGroup}
             placeholder="e.g., Chest"
           />
-        </View>
+        </ThemedView>
 
         <TouchableOpacity
           className={`mt-6 rounded-lg p-4 ${isSubmitting ? 'bg-gray-400' : 'bg-blue-500'}`}
           onPress={handleSubmit}
           disabled={isSubmitting}>
-          <Text className="text-center font-semibold text-white">
+          <ThemedText className="text-center font-semibold text-white">
             {isSubmitting
               ? `${mode === 'add' ? 'Creating' : 'Updating'}...`
               : `${mode === 'add' ? 'Create' : 'Update'} Exercise`}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </ThemedView>
   );
 }

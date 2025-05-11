@@ -1,4 +1,7 @@
-import { View, Text, Linking, TouchableOpacity } from 'react-native';
+import { Linking, TouchableOpacity } from 'react-native';
+
+import { ThemedText } from '~/components/ThemedText';
+import { ThemedView } from '~/components/ThemedView';
 
 export default function AboutScreen() {
   const handleOpenGitHub = () => {
@@ -6,37 +9,39 @@ export default function AboutScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
-      <View className="mb-8">
-        <Text className="text-2xl font-bold">About</Text>
-      </View>
+    <ThemedView className="flex-1 p-4">
+      <ThemedView className="mb-8">
+        <ThemedText className="text-2xl font-bold">About</ThemedText>
+      </ThemedView>
 
-      <View className="space-y-4">
-        <View className="rounded-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold">Version</Text>
-          <Text className="text-gray-600">1.0.0</Text>
-        </View>
+      <ThemedView className="space-y-4">
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedText className="text-lg font-semibold">Version</ThemedText>
+          <ThemedText className="text-neutral-500">1.0.0</ThemedText>
+        </ThemedView>
 
-        <View className="rounded-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold">Description</Text>
-          <Text className="text-gray-600">
-            Gym Tracker is a mobile application designed to help you track your workouts and achieve your fitness goals.
-          </Text>
-        </View>
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedText className="text-lg font-semibold">Description</ThemedText>
+          <ThemedText className="text-neutral-500">
+            Gym Tracker is a mobile application designed to help you track your workouts and achieve
+            your fitness goals.
+          </ThemedText>
+        </ThemedView>
 
-        <View className="rounded-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold">Developer</Text>
-          <Text className="text-gray-600">Your Name</Text>
-        </View>
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedText className="text-lg font-semibold">Developer</ThemedText>
+          <ThemedText className="text-neutral-500">Your Name</ThemedText>
+        </ThemedView>
 
         <TouchableOpacity
           className="rounded-lg border border-gray-200 p-4"
-          onPress={handleOpenGitHub}
-        >
-          <Text className="text-lg font-semibold">GitHub Repository</Text>
-          <Text className="text-blue-500">github.com/yourusername/mobile-gym-tracker-vibe</Text>
+          onPress={handleOpenGitHub}>
+          <ThemedText className="text-lg font-semibold">GitHub Repository</ThemedText>
+          <ThemedText className="text-blue-500">
+            github.com/yourusername/mobile-gym-tracker-vibe
+          </ThemedText>
         </TouchableOpacity>
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
-} 
+}

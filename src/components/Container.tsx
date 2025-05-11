@@ -1,13 +1,9 @@
-import { View } from 'react-native';
+import { ThemedView } from './ThemedView';
 
 interface ContainerProps {
   children: React.ReactNode;
 }
 
 export function Container({ children }: ContainerProps) {
-  return (
-    <View className="flex-1 bg-neutral-50">
-      {children}
-    </View>
-  );
+  return <ThemedView className="flex-1 bg-neutral-50">{children}</ThemedView>;
 }

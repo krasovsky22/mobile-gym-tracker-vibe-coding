@@ -3,9 +3,11 @@ import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
 import { useAlert } from '~/components/AlertProvider';
+import { ThemedText } from '~/components/ThemedText';
+import { ThemedView } from '~/components/ThemedView';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -52,53 +54,57 @@ export default function WorkoutsScreen() {
   );
 
   return (
-    <View className="flex-1 bg-white">
-      <View className="p-4">
+    <ThemedView className="flex-1">
+      <ThemedView className="p-4">
         <TextInput
           className="rounded-lg border border-gray-200 p-3"
           placeholder="Search workouts..."
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-      </View>
+      </ThemedView>
 
       <ScrollView className="flex-1 px-4">
         {filteredWorkouts?.map((workout: Workout) => (
-          <View key={workout._id} className="mb-4 rounded-lg border border-gray-200 p-4">
-            <View className="flex-row justify-between">
-              <View className="flex-1">
-                <Text className="text-lg font-semibold">{workout.name}</Text>
-                <Text className="text-gray-600">{workout.exercises.length} exercises</Text>
-                <Text className="text-gray-600">
+          <ThemedView key={workout._id} className="mb-4 rounded-lg border border-gray-200 p-4">
+            <ThemedView className="flex-row justify-between">
+              <ThemedView className="flex-1">
+                <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
+                <ThemedText className="text-gray-600">
+                  {workout.exercises.length} exercises
+                </ThemedText>
+                <ThemedText className="text-gray-600">
                   Total sets:{' '}
                   {workout.exercises.reduce((sum: number, ex: WorkoutExercise) => sum + ex.sets, 0)}
-                </Text>
-              </View>
-              <View className="flex-row space-x-2">
+                </ThemedText>
+              </ThemedView>
+              <ThemedView className="flex-row space-x-2">
                 <TouchableOpacity
                   className="rounded-lg bg-gray-200 px-3 py-2"
                   onPress={() => handleEdit(workout._id)}>
-                  <Text className="font-semibold text-gray-700">Edit</Text>
+                  <ThemedText className="font-semibold text-gray-700">Edit</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   className="rounded-lg bg-red-100 px-3 py-2"
                   onPress={() => handleDelete(workout._id)}
                   disabled={isDeleting}>
-                  <Text className="font-semibold text-red-700">Delete</Text>
+                  <ThemedText className="font-semibold text-red-700">Delete</ThemedText>
                 </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+              </ThemedView>
+            </ThemedView>
+          </ThemedView>
         ))}
       </ScrollView>
 
-      <View className="border-t border-gray-200 bg-white p-4">
+      <ThemedView className="border-t border-gray-200 bg-white p-4">
         <TouchableOpacity
           className="rounded-lg bg-blue-500 p-4"
           onPress={() => router.push('/settings/workouts/add')}>
-          <Text className="text-center font-semibold text-white">Create New Workout</Text>
+          <ThemedText className="text-center font-semibold text-white">
+            Create New Workout
+          </ThemedText>
         </TouchableOpacity>
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 }

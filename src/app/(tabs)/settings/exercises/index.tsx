@@ -2,43 +2,47 @@ import { api } from 'convex/_generated/api';
 import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView } from 'react-native';
 
 import { useAlert } from '~/components/AlertProvider';
+import { ThemedText } from '~/components/ThemedText';
+import { ThemedView } from '~/components/ThemedView';
 
 export default function ExercisesScreen() {
   const router = useRouter();
-  const { confirm, error } = useAlert();
+  const { error } = useAlert();
   const exercises = useQuery(api.exercises.list);
   const deleteExercise = useMutation(api.exercises.remove);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredExercises = useMemo(() => {
-    if (!exercises) return [];
-    if (!searchQuery.trim()) return exercises;
+  const filteredExercises = useMemo(
+    () =>
+      exercises?.filter((exercise) =>
+        exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) ?? [],
+    [exercises, searchQuery]
+  );
 
-    const query = searchQuery.toLowerCase();
-    return exercises.filter(
-      (exercise) =>
-        exercise.name.toLowerCase().includes(query) ||
-        exercise.category?.toLowerCase().includes(query) ||
-        exercise.muscleGroup?.toLowerCase().includes(query)
-    );
-  }, [exercises, searchQuery]);
-
-  const handleDelete = async (exerciseId: string) => {
-    confirm('Delete Exercise', 'Are you sure you want to delete this exercise?', async () => {
-      try {
-        setIsDeleting(true);
-        await deleteExercise({ id: exerciseId });
-      } catch (err) {
-        console.error('Error deleting exercise:', err);
-        error('Failed to delete exercise');
-      } finally {
-        setIsDeleting(false);
-      }
-    });
+  const handleDelete = (exerciseId: string) => {
+    setIsDeleting(true);
+    error('Are you sure you want to delete this exercise?', 'Confirm Delete', [
+      { text: 'Cancel', style: 'cancel', onPress: () => setIsDeleting(false) },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteExercise({ id: exerciseId });
+          } catch (err) {
+            console.error('Error deleting exercise:', err);
+            error('Failed to delete exercise');
+          } finally {
+            setIsDeleting(false);
+          }
+        },
+      },
+    ]);
   };
 
   const handleEdit = (exerciseId: string) => {
@@ -46,50 +50,52 @@ export default function ExercisesScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white">
-      <View className="p-4">
+    <ThemedView className="flex-1">
+      <ThemedView className="p-4">
         <TextInput
           className="rounded-lg border border-gray-200 p-3"
           placeholder="Search exercises..."
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-      </View>
+      </ThemedView>
 
       <ScrollView className="flex-1 px-4">
         {filteredExercises.map((exercise) => (
-          <View key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
-            <View className="flex-row justify-between">
-              <View className="flex-1">
-                <Text className="text-lg font-semibold">{exercise.name}</Text>
-                <Text className="text-gray-600">Category: {exercise.category}</Text>
-                <Text className="text-gray-600">Muscle Group: {exercise.muscleGroup}</Text>
-              </View>
-              <View className="flex-row space-x-2">
+          <ThemedView key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
+            <ThemedView className="flex-row justify-between">
+              <ThemedView className="flex-1">
+                <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
+                <ThemedText className="text-neutral-500">Category: {exercise.category}</ThemedText>
+                <ThemedText className="text-neutral-500">
+                  Muscle Group: {exercise.muscleGroup}
+                </ThemedText>
+              </ThemedView>
+              <ThemedView className="flex-row space-x-2">
                 <TouchableOpacity
                   className="rounded-lg bg-gray-200 px-3 py-2"
                   onPress={() => handleEdit(exercise._id)}>
-                  <Text className="font-semibold text-gray-700">Edit</Text>
+                  <ThemedText className="font-semibold text-gray-700">Edit</ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   className="rounded-lg bg-red-100 px-3 py-2"
                   onPress={() => handleDelete(exercise._id)}
                   disabled={isDeleting}>
-                  <Text className="font-semibold text-red-700">Delete</Text>
+                  <ThemedText className="font-semibold text-red-700">Delete</ThemedText>
                 </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+              </ThemedView>
+            </ThemedView>
+          </ThemedView>
         ))}
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 bg-white p-4">
+      <ThemedView className="bg-white p-4">
         <TouchableOpacity
           className="rounded-lg bg-blue-500 p-4"
           onPress={() => router.push('/settings/exercises/add')}>
-          <Text className="text-center font-semibold text-white">Add New Exercise</Text>
+          <ThemedText className="text-center font-semibold text-white">Add New Exercise</ThemedText>
         </TouchableOpacity>
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 }

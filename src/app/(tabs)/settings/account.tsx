@@ -1,6 +1,8 @@
 import { api } from 'convex/_generated/api';
 import { useConvexAuth, useQuery } from 'convex/react';
-import { View, Text } from 'react-native';
+
+import { ThemedText } from '~/components/ThemedText';
+import { ThemedView } from '~/components/ThemedView';
 
 export default function AccountSettingsScreen() {
   const { isAuthenticated } = useConvexAuth();
@@ -11,29 +13,29 @@ export default function AccountSettingsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white p-4">
-      <View className="mb-8">
-        <Text className="text-2xl font-bold">Account Settings</Text>
-      </View>
+    <ThemedView className="flex-1 p-4">
+      <ThemedView className="mb-8">
+        <ThemedText className="text-2xl font-bold">Account Settings</ThemedText>
+      </ThemedView>
 
-      <View className="space-y-4">
-        <View className="rounded-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold">Profile</Text>
-          <Text className="text-gray-600">Email: {user.email}</Text>
-          <Text className="text-gray-600">Name: {user.name}</Text>
-        </View>
+      <ThemedView className="space-y-4">
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedText className="text-lg font-semibold">Profile</ThemedText>
+          <ThemedText className="text-neutral-500">Email: {user.email}</ThemedText>
+          <ThemedText className="text-neutral-500">Name: {user.name}</ThemedText>
+        </ThemedView>
 
-        <View className="rounded-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold">Security</Text>
-          <Text className="text-gray-600">Change password</Text>
-          <Text className="text-gray-600">Two-factor authentication</Text>
-        </View>
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedText className="text-lg font-semibold">Security</ThemedText>
+          <ThemedText className="text-neutral-500">Change password</ThemedText>
+          <ThemedText className="text-neutral-500">Two-factor authentication</ThemedText>
+        </ThemedView>
 
-        <View className="rounded-lg border border-gray-200 p-4">
-          <Text className="text-lg font-semibold">Connected Accounts</Text>
-          <Text className="text-gray-600">GitHub: Connected</Text>
-        </View>
-      </View>
-    </View>
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedText className="text-lg font-semibold">Connected Accounts</ThemedText>
+          <ThemedText className="text-neutral-500">GitHub: Connected</ThemedText>
+        </ThemedView>
+      </ThemedView>
+    </ThemedView>
   );
 }

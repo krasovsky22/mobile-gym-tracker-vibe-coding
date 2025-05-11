@@ -2,9 +2,11 @@ import { api } from 'convex/_generated/api';
 import { Id } from 'convex/_generated/dataModel';
 import { useQuery } from 'convex/react';
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
 
 import { useAlert } from './AlertProvider';
+import { ThemedText } from './ThemedText';
+import { ThemedView } from './ThemedView';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -55,15 +57,15 @@ export default function ExerciseSelectModal({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-white">
-        <View className="flex-row items-center border-b border-gray-200 p-4">
+      <ThemedView className="flex-1 bg-white">
+        <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
           <TouchableOpacity className="mr-4 rounded-lg bg-gray-100 px-4 py-2" onPress={onClose}>
-            <Text className="font-semibold text-gray-700">Cancel</Text>
+            <ThemedText className="font-semibold text-gray-700">Cancel</ThemedText>
           </TouchableOpacity>
-          <Text className="text-xl font-semibold">Select Exercise</Text>
-        </View>
+          <ThemedText className="text-xl font-semibold">Select Exercise</ThemedText>
+        </ThemedView>
 
-        <View className="flex-1 p-4">
+        <ThemedView className="flex-1 p-4">
           <TextInput
             className="mb-4 rounded-lg border border-gray-300 p-3"
             placeholder="Search exercises..."
@@ -73,21 +75,21 @@ export default function ExerciseSelectModal({
 
           <ScrollView className="flex-1">
             {filteredExercises?.length === 0 ? (
-              <Text className="text-center text-gray-500">No exercises found</Text>
+              <ThemedText className="text-center text-gray-500">No exercises found</ThemedText>
             ) : (
               filteredExercises?.map((exercise) => (
                 <TouchableOpacity
                   key={exercise._id}
                   className="mb-2 rounded-lg border border-gray-200 p-4"
                   onPress={() => onSelect(exercise._id)}>
-                  <Text className="text-lg font-semibold">{exercise.name}</Text>
-                  <Text className="text-gray-600">{exercise.category}</Text>
+                  <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
+                  <ThemedText className="text-gray-600">{exercise.category}</ThemedText>
                 </TouchableOpacity>
               ))
             )}
           </ScrollView>
-        </View>
-      </View>
+        </ThemedView>
+      </ThemedView>
     </Modal>
   );
 }

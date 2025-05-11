@@ -1,60 +1,64 @@
-import { View, Text, Switch } from 'react-native';
 import { useState } from 'react';
+import { Switch } from 'react-native';
+
+import { useTheme } from '~/components/ThemeProvider';
+import { ThemedText } from '~/components/ThemedText';
+import { ThemedView } from '~/components/ThemedView';
 
 export default function PreferencesScreen() {
-  const [darkMode, setDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
 
   return (
-    <View className="flex-1 bg-white p-4">
-      <View className="mb-8">
-        <Text className="text-2xl font-bold">Preferences</Text>
-      </View>
+    <ThemedView className="flex-1 p-4">
+      <ThemedView className="mb-8">
+        <ThemedText className="text-2xl font-bold">Preferences</ThemedText>
+      </ThemedView>
 
-      <View className="space-y-4">
-        <View className="rounded-lg border border-gray-200 p-4">
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-lg font-semibold">Dark Mode</Text>
-              <Text className="text-gray-600">Enable dark theme</Text>
-            </View>
+      <ThemedView className="space-y-4">
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedView className="flex-row items-center justify-between">
+            <ThemedView>
+              <ThemedText className="text-lg font-semibold">Dark Mode</ThemedText>
+              <ThemedText className="text-neutral-500">Enable dark theme</ThemedText>
+            </ThemedView>
             <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
+              value={isDarkMode}
+              onValueChange={toggleDarkMode}
               trackColor={{ false: '#767577', true: '#3b82f6' }}
             />
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
 
-        <View className="rounded-lg border border-gray-200 p-4">
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-lg font-semibold">Notifications</Text>
-              <Text className="text-gray-600">Receive workout reminders</Text>
-            </View>
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedView className="flex-row items-center justify-between">
+            <ThemedView>
+              <ThemedText className="text-lg font-semibold">Notifications</ThemedText>
+              <ThemedText className="text-neutral-500">Receive workout reminders</ThemedText>
+            </ThemedView>
             <Switch
               value={notifications}
               onValueChange={setNotifications}
               trackColor={{ false: '#767577', true: '#3b82f6' }}
             />
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
 
-        <View className="rounded-lg border border-gray-200 p-4">
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-lg font-semibold">Sound Effects</Text>
-              <Text className="text-gray-600">Play sounds during workouts</Text>
-            </View>
+        <ThemedView className="rounded-lg border border-gray-200 p-4">
+          <ThemedView className="flex-row items-center justify-between">
+            <ThemedView>
+              <ThemedText className="text-lg font-semibold">Sound Effects</ThemedText>
+              <ThemedText className="text-neutral-500">Play sounds during workouts</ThemedText>
+            </ThemedView>
             <Switch
               value={soundEffects}
               onValueChange={setSoundEffects}
               trackColor={{ false: '#767577', true: '#3b82f6' }}
             />
-          </View>
-        </View>
-      </View>
-    </View>
+          </ThemedView>
+        </ThemedView>
+      </ThemedView>
+    </ThemedView>
   );
-} 
+}
