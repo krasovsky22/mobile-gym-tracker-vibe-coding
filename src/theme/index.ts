@@ -1,4 +1,4 @@
-export { ThemedButton } from './ThemedButton';
-export { ThemedText } from './ThemedText';
-export { ThemedTextInput } from './ThemedTextInput';
-export { ThemedView } from './ThemedView';
+export { ThemedText } from './Text';
+export { ThemedView } from './View';
+export { ThemedButton } from './Button';
+export { ThemedTextInput } from './TextInput';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
-import { ThemedText } from './ThemedText';
+import { ThemedText } from './Text';
 
 interface ThemedButtonProps extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'danger';
