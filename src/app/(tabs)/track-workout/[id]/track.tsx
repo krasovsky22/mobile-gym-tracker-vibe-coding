@@ -2,7 +2,7 @@ import { api } from 'convex/_generated/api';
 import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -10,8 +10,8 @@ import { useAlert } from '~/context/alert';
 import { ThemedButton, ThemedText, ThemedTextInput, ThemedView } from '~/theme';
 
 type ExerciseSet = {
-  weight: number;
-  reps: number;
+  weight: number | null;
+  reps: number | null;
   isCompleted: boolean;
 };
 
@@ -28,25 +28,80 @@ export default function TrackWorkoutDetailsScreen() {
   const exercises = useQuery(api.exercises.list);
   const saveTrackedWorkout = useMutation(api.trackedWorkouts.create);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
   const [trackingExercises, setTrackingExercises] = useState<TrackingExercise[]>([]);
 
-  // Initialize tracking exercises when workout data is loaded
   useEffect(() => {
     if (workout && !trackingExercises.length) {
       setTrackingExercises(
         workout.exercises.map((ex) => ({
           exerciseId: ex.exerciseId,
-          sets: Array(ex.sets).fill({ weight: 0, reps: 0, isCompleted: false }),
+          sets: Array(ex.sets).fill({ weight: null, reps: null, isCompleted: false }),
         }))
       );
     }
   }, [workout]);
 
+  const saveWorkoutData = useCallback(
+    async (options: {
+      exercises: TrackingExercise[];
+      showError?: boolean;
+      finishWorkout?: boolean;
+    }) => {
+      if (!workout) return;
+
+      try {
+        await saveTrackedWorkout({
+          workoutId: workout._id,
+          exercises: options.exercises
+            .filter((exercise) => exercise.sets.some((set) => set.reps !== null))
+            .map((exercise) => ({
+              exerciseId: exercise.exerciseId,
+              sets: exercise.sets
+                .filter((set) => set.reps !== null)
+                .map((set) => ({
+                  weight: set.weight ?? 0,
+                  reps: set.reps!,
+                  isCompleted: set.isCompleted,
+                })),
+            })),
+        });
+
+        if (options.finishWorkout) {
+          router.replace('/home');
+        }
+      } catch (err) {
+        console.error('Error saving workout:', err);
+        if (options.showError) {
+          error('Failed to save workout progress');
+        }
+      }
+    },
+    [workout, saveTrackedWorkout, router, error]
+  );
+
+  const handleAutoSave = useCallback(
+    async (updatedExercises: TrackingExercise[]) => {
+      if (!workout || autoSaving) return;
+
+      try {
+        setAutoSaving(true);
+        await saveWorkoutData({
+          exercises: updatedExercises,
+          showError: false,
+        });
+      } finally {
+        setAutoSaving(false);
+      }
+    },
+    [workout, autoSaving, saveWorkoutData]
+  );
+
   const handleUpdateSet = (
     exerciseIndex: number,
     setIndex: number,
     field: keyof ExerciseSet,
-    value: number | boolean
+    value: number | boolean | null
   ) => {
     setTrackingExercises((prev) => {
       const updated = [...prev];
@@ -60,6 +115,11 @@ export default function TrackWorkoutDetailsScreen() {
       };
       return updated;
     });
+
+    // Schedule auto-save
+    setTimeout(() => {
+      handleAutoSave(trackingExercises);
+    }, 1000);
   };
 
   const handleSaveWorkout = async () => {
@@ -67,14 +127,11 @@ export default function TrackWorkoutDetailsScreen() {
 
     try {
       setIsSubmitting(true);
-      await saveTrackedWorkout({
-        workoutId: workout._id,
+      await saveWorkoutData({
         exercises: trackingExercises,
+        showError: true,
+        finishWorkout: true,
       });
-      router.replace('/home');
-    } catch (err) {
-      console.error('Error saving tracked workout:', err);
-      error('Failed to save workout progress');
     } finally {
       setIsSubmitting(false);
     }
@@ -128,16 +185,17 @@ export default function TrackWorkoutDetailsScreen() {
                               </ThemedText>
                               <ThemedTextInput
                                 className="w-20 rounded-lg border border-gray-300 p-2 text-center"
-                                value={set.weight.toString()}
+                                value={set.weight?.toString() ?? ''}
                                 onChangeText={(value) =>
                                   handleUpdateSet(
                                     exerciseIndex,
                                     setIndex,
                                     'weight',
-                                    parseFloat(value) || 0
+                                    value ? parseFloat(value) : null
                                   )
                                 }
                                 keyboardType="numeric"
+                                placeholder="0"
                               />
                             </ThemedView>
 
@@ -147,11 +205,17 @@ export default function TrackWorkoutDetailsScreen() {
                               </ThemedText>
                               <ThemedTextInput
                                 className="w-20 rounded-lg border border-gray-300 p-2 text-center"
-                                value={set.reps.toString()}
+                                value={set.reps?.toString() ?? ''}
                                 onChangeText={(value) =>
-                                  handleUpdateSet(exerciseIndex, setIndex, 'reps', +(value || 0))
+                                  handleUpdateSet(
+                                    exerciseIndex,
+                                    setIndex,
+                                    'reps',
+                                    value ? parseInt(value, 10) : null
+                                  )
                                 }
                                 keyboardType="numeric"
+                                placeholder="0"
                               />
                             </ThemedView>
                           </ThemedView>
@@ -179,7 +243,7 @@ export default function TrackWorkoutDetailsScreen() {
 
           <ThemedView className="border-t border-gray-200 bg-white p-4">
             <ThemedButton variant="primary" disabled={isSubmitting} onPress={handleSaveWorkout}>
-              {isSubmitting ? 'Saving...' : 'Save Workout'}
+              {autoSaving ? 'Auto-saving...' : isSubmitting ? 'Saving...' : 'Save & Finish'}
             </ThemedButton>
           </ThemedView>
         </SafeAreaView>

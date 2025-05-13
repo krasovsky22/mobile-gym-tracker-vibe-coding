@@ -17,6 +17,8 @@ import type * as auth from "../auth.js";
 import type * as exercises from "../exercises.js";
 import type * as http from "../http.js";
 import type * as preferences from "../preferences.js";
+import type * as trackedWorkoutExerciseSets from "../trackedWorkoutExerciseSets.js";
+import type * as trackedWorkoutExercises from "../trackedWorkoutExercises.js";
 import type * as trackedWorkouts from "../trackedWorkouts.js";
 import type * as users from "../users.js";
 import type * as workouts from "../workouts.js";
@@ -34,6 +36,8 @@ declare const fullApi: ApiFromModules<{
   exercises: typeof exercises;
   http: typeof http;
   preferences: typeof preferences;
+  trackedWorkoutExerciseSets: typeof trackedWorkoutExerciseSets;
+  trackedWorkoutExercises: typeof trackedWorkoutExercises;
   trackedWorkouts: typeof trackedWorkouts;
   users: typeof users;
   workouts: typeof workouts;

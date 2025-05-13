@@ -26,19 +26,24 @@ const schema = defineSchema({
     workoutId: v.id('workouts'),
     userId: v.id('users'),
     date: v.number(),
-    exercises: v.array(
-      v.object({
-        exerciseId: v.id('exercises'),
-        sets: v.array(
-          v.object({
-            weight: v.number(),
-            reps: v.number(),
-            isCompleted: v.boolean(),
-          })
-        ),
-      })
-    ),
   }).index('by_user', ['userId']),
+  trackedWorkoutExercises: defineTable({
+    trackedWorkoutId: v.id('trackedWorkouts'),
+    exerciseId: v.id('exercises'),
+    userId: v.id('users'),
+  })
+    .index('by_tracked_workout', ['trackedWorkoutId'])
+    .index('by_user', ['userId']),
+  trackedWorkoutExerciseSets: defineTable({
+    trackedWorkoutExerciseId: v.id('trackedWorkoutExercises'),
+    userId: v.id('users'),
+    setNumber: v.number(),
+    weight: v.number(),
+    reps: v.number(),
+    isCompleted: v.boolean(),
+  })
+    .index('by_tracked_workout_exercise', ['trackedWorkoutExerciseId'])
+    .index('by_user', ['userId']),
   userPreferences: defineTable({
     userId: v.id('users'),
     isDarkMode: v.boolean(),
