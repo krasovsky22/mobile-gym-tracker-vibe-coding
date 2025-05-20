@@ -12,6 +12,7 @@ export const list = query({
 export const get = query({
   args: { id: v.id('workouts') },
   handler: async (ctx, args) => {
+    console.log('get in workouts');
     return await ctx.db.get(args.id);
   },
 });

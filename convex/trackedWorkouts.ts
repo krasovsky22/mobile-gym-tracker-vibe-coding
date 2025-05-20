@@ -6,59 +6,26 @@ import { getUserId } from './users';
 export const create = mutation({
   args: {
     workoutId: v.id('workouts'),
-    exercises: v.array(
-      v.object({
-        exerciseId: v.id('exercises'),
-        sets: v.array(
-          v.object({
-            weight: v.number(),
-            reps: v.number(),
-            isCompleted: v.boolean(),
-          })
-        ),
-      })
-    ),
   },
   handler: async (ctx, args) => {
     const userId = await getUserId(ctx);
     const workout = await ctx.db.get(args.workoutId);
+
     if (!workout) {
       throw new Error('Workout not found');
     }
 
     // Create tracked workout first
-    const trackedWorkout = await ctx.db.insert('trackedWorkouts', {
+    const trackedWorkoutId = await ctx.db.insert('trackedWorkouts', {
       workoutId: args.workoutId,
       userId,
-      date: Date.now(),
+      status: 'started',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      completedAt: null,
     });
 
-    // Then create tracked workout exercises and their sets
-    await Promise.all(
-      args.exercises.map(async (exercise) => {
-        const trackedExercise = await ctx.db.insert('trackedWorkoutExercises', {
-          trackedWorkoutId: trackedWorkout,
-          exerciseId: exercise.exerciseId,
-          userId,
-        });
-
-        // Create sets for this exercise
-        await Promise.all(
-          exercise.sets.map((set, index) =>
-            ctx.db.insert('trackedWorkoutExerciseSets', {
-              trackedWorkoutExerciseId: trackedExercise,
-              userId,
-              setNumber: index + 1,
-              weight: set.weight ?? 0,
-              reps: set.reps,
-              isCompleted: set.isCompleted,
-            })
-          )
-        );
-      })
-    );
-
-    return trackedWorkout;
+    return trackedWorkoutId;
   },
 });
 
@@ -105,12 +72,16 @@ export const list = query({
 export const get = query({
   args: { id: v.id('trackedWorkouts') },
   handler: async (ctx, args) => {
-    const userId = await getUserId(ctx);
+    console.log('asdasdasdasdasd', args);
+    // const userId = await getUserId(ctx);
     const trackedWorkout = await ctx.db.get(args.id);
 
-    if (!trackedWorkout || trackedWorkout.userId !== userId) {
+    console.log('asdasdasda', trackedWorkout);
+    if (!trackedWorkout) {
       return null;
     }
+
+    console.log('trackedWorkout', trackedWorkout);
 
     const exercises = await ctx.db
       .query('trackedWorkoutExercises')

@@ -80,6 +80,16 @@ export const remove = mutation({
   },
 });
 
+export const findByIds = query({
+  args: { ids: v.array(v.string()) },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('exercises')
+      .filter((q) => args.ids.some((id) => q.eq('_id', id)))
+      .collect();
+  },
+});
+
 export const list = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();

@@ -9,76 +9,93 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAlert } from '~/context/alert';
 import { ThemedButton, ThemedText, ThemedTextInput, ThemedView } from '~/theme';
 
-type ExerciseSet = {
+type ExerciseSetType = {
   weight: number | null;
   reps: number | null;
   isCompleted: boolean;
 };
 
-type TrackingExercise = {
+type ExerciseType = {
+  _id: Id<'exercises'>;
+  name: string;
+  category: string;
+  muscleGroup: string;
+};
+
+type TrackingExerciseType = {
+  exercise: ExerciseType;
   exerciseId: Id<'exercises'>;
-  sets: ExerciseSet[];
+  sets: ExerciseSetType[];
 };
 
 export default function TrackWorkoutDetailsScreen() {
   const router = useRouter();
   const { error } = useAlert();
-  const { id } = useLocalSearchParams<{ id: Id<'workouts'> }>();
-  const workout = useQuery(api.workouts.get, { id });
-  const exercises = useQuery(api.exercises.list);
-  const saveTrackedWorkout = useMutation(api.trackedWorkouts.create);
+  const { id } = useLocalSearchParams<{ id: string }>();
+  console.log('trackedWorkoutId', id);
+  const trackedWorkout = useQuery(api.trackedWorkouts.get, { id: id as Id<'trackedWorkouts'> })!;
+
+  console.log('trackedWorkout', trackedWorkout);
+  const workout = useQuery(api.workouts.get, { id: trackedWorkout.workoutId })!;
+  const exercises = useQuery(api.exercises.findByIds, {
+    ids: workout.exercises.map((exercise) => exercise.exerciseId),
+  })!;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
-  const [trackingExercises, setTrackingExercises] = useState<TrackingExercise[]>([]);
+  const [trackingExercises, setTrackingExercises] = useState<TrackingExerciseType[]>([]);
 
   useEffect(() => {
-    if (workout && !trackingExercises.length) {
+    if (workout) {
       setTrackingExercises(
-        workout.exercises.map((ex) => ({
-          exerciseId: ex.exerciseId,
-          sets: Array(ex.sets).fill({ weight: null, reps: null, isCompleted: false }),
-        }))
+        workout.exercises.map((ex) => {
+          const exercise = exercises.find((exercise) => exercise._id === ex.exerciseId)!;
+          return {
+            ...ex,
+            exercise,
+            sets: Array(ex.sets).fill({ weight: null, reps: null, isCompleted: false }),
+          };
+        })
       );
     }
-  }, [workout]);
+  }, [workout._id]);
 
-  const saveWorkoutData = useCallback(
-    async (options: {
-      exercises: TrackingExercise[];
-      showError?: boolean;
-      finishWorkout?: boolean;
-    }) => {
-      if (!workout) return;
+  const saveWorkoutData = useCallback();
+  // async (options: {
+  //   exercises: TrackingExercise[];
+  //   showError?: boolean;
+  //   finishWorkout?: boolean;
+  // }) => {
+  //   if (!workout) return;
 
-      try {
-        await saveTrackedWorkout({
-          workoutId: workout._id,
-          exercises: options.exercises
-            .filter((exercise) => exercise.sets.some((set) => set.reps !== null))
-            .map((exercise) => ({
-              exerciseId: exercise.exerciseId,
-              sets: exercise.sets
-                .filter((set) => set.reps !== null)
-                .map((set) => ({
-                  weight: set.weight ?? 0,
-                  reps: set.reps!,
-                  isCompleted: set.isCompleted,
-                })),
-            })),
-        });
+  //   try {
+  //     await saveTrackedWorkout({
+  //       workoutId: workout._id,
+  //       exercises: options.exercises
+  //         .filter((exercise) => exercise.sets.some((set) => set.reps !== null))
+  //         .map((exercise) => ({
+  //           exerciseId: exercise.exerciseId,
+  //           sets: exercise.sets
+  //             .filter((set) => set.reps !== null)
+  //             .map((set) => ({
+  //               weight: set.weight ?? 0,
+  //               reps: set.reps!,
+  //               isCompleted: set.isCompleted,
+  //             })),
+  //         })),
+  //     });
 
-        if (options.finishWorkout) {
-          router.replace('/home');
-        }
-      } catch (err) {
-        console.error('Error saving workout:', err);
-        if (options.showError) {
-          error('Failed to save workout progress');
-        }
-      }
-    },
-    [workout, saveTrackedWorkout, router, error]
-  );
+  //     if (options.finishWorkout) {
+  //       router.replace('/home');
+  //     }
+  //   } catch (err) {
+  //     console.error('Error saving workout:', err);
+  //     if (options.showError) {
+  //       error('Failed to save workout progress');
+  //     }
+  //   }
+  // },
+  // [workout, saveTrackedWorkout, router, error]
 
   const handleAutoSave = useCallback(
     async (updatedExercises: TrackingExercise[]) => {
@@ -117,9 +134,9 @@ export default function TrackWorkoutDetailsScreen() {
     });
 
     // Schedule auto-save
-    setTimeout(() => {
-      handleAutoSave(trackingExercises);
-    }, 1000);
+    // setTimeout(() => {
+    //   handleAutoSave(trackingExercises);
+    // }, 1000);
   };
 
   const handleSaveWorkout = async () => {
@@ -137,7 +154,7 @@ export default function TrackWorkoutDetailsScreen() {
     }
   };
 
-  if (!workout || !exercises) {
+  if (!trackedWorkout || !workout || !exercises) {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ThemedText>Loading...</ThemedText>
@@ -162,15 +179,30 @@ export default function TrackWorkoutDetailsScreen() {
           <ScrollView className="flex-1">
             <ThemedView className="p-4">
               {trackingExercises.map((trackingExercise, exerciseIndex) => {
-                const exercise = exercises.find((e) => e._id === trackingExercise.exerciseId);
+                const exercise = trackingExercise.exercise;
                 if (!exercise) return null;
 
                 return (
                   <ThemedView
                     key={exercise._id}
                     className="mb-6 rounded-lg border border-gray-200 p-4">
-                    <ThemedText className="mb-2 text-lg font-semibold">{exercise.name}</ThemedText>
-                    <ThemedText className="mb-4 text-gray-600">{exercise.muscleGroup}</ThemedText>
+                    {/* Exercise Header */}
+                    <ThemedView className="flex-row items-center justify-between">
+                      {/* Exercise Name */}
+                      <ThemedView className="flex-1">
+                        <ThemedText className="mb-2 text-lg font-semibold">
+                          {exercise.name}
+                        </ThemedText>
+                        <ThemedText className="mb-4 text-gray-600">
+                          {exercise.muscleGroup}
+                        </ThemedText>
+                      </ThemedView>
+
+                      {/* Start Exercise Button */}
+                      <ThemedView>
+                        <ThemedButton>Start Exercise</ThemedButton>
+                      </ThemedView>
+                    </ThemedView>
 
                     {trackingExercise.sets.map((set, setIndex) => (
                       <ThemedView

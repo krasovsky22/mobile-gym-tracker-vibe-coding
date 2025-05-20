@@ -1,6 +1,6 @@
 import { api } from 'convex/_generated/api';
 import { Id } from 'convex/_generated/dataModel';
-import { useQuery } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 
@@ -21,11 +21,26 @@ export default function TrackWorkoutScreen() {
   const router = useRouter();
   const workouts = useQuery(api.workouts.list);
 
-  const handleSelectWorkout = (workout: Workout) => {
-    router.push({
-      pathname: '/track-workout/[id]/track',
-      params: { id: workout._id },
-    });
+  const saveTrackedWorkout = useMutation(api.trackedWorkouts.create);
+
+  const handleSelectWorkout = async (workout: Workout) => {
+    // create workout row
+    try {
+      const trackedWorkoutId = await saveTrackedWorkout({
+        workoutId: workout._id,
+      });
+
+      if (!trackedWorkoutId) {
+        throw new Error('Failed to create tracked workout');
+      }
+
+      // redirect to track workout screen
+      router.push({
+        pathname: `/track-workout/${trackedWorkoutId}/track`,
+      });
+    } catch (err) {
+      console.error('Error creating tracked workout:', err);
+    }
   };
 
   return (

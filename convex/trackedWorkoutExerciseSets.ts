@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
+import { getUserId } from './users';
 
 export const create = mutation({
   args: {
@@ -11,7 +12,12 @@ export const create = mutation({
     isCompleted: v.boolean(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert('trackedWorkoutExerciseSets', args);
+    const userId = await getUserId(ctx)!;
+
+    return await ctx.db.insert('trackedWorkoutExerciseSets', {
+      ...args,
+      userId,
+    });
   },
 });
 
