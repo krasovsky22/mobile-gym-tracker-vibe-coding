@@ -1,6 +1,8 @@
 import { v } from 'convex/values';
 
-import { query, mutation } from './_generated/server';
+import { Id } from './_generated/dataModel';
+import { query, mutation, QueryCtx } from './_generated/server';
+import * as Exercises from './exercises';
 
 export const list = query({
   args: {},
@@ -9,13 +11,22 @@ export const list = query({
   },
 });
 
-export const get = query({
-  args: { id: v.id('workouts') },
-  handler: async (ctx, args) => {
-    console.log('get in workouts');
-    return await ctx.db.get(args.id);
-  },
-});
+export const get = async (ctx: QueryCtx, { id }: { id: Id<'workouts'> }) => {
+  const workout = await ctx.db.get(id);
+
+  if (!workout) {
+    return null;
+  }
+
+  const exercises = await Exercises.findByIds(ctx, {
+    ids: workout.exercises.map((e) => e.exerciseId),
+  });
+
+  return {
+    ...workout,
+    exercises,
+  };
+};
 
 export const create = mutation({
   args: {

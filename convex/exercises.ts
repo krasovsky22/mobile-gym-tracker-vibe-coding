@@ -2,7 +2,7 @@ import { v } from 'convex/values';
 
 import { api } from './_generated/api';
 import { Id } from './_generated/dataModel';
-import { mutation, query } from './_generated/server';
+import { mutation, query, QueryCtx } from './_generated/server';
 
 export const create = mutation({
   args: {
@@ -80,15 +80,12 @@ export const remove = mutation({
   },
 });
 
-export const findByIds = query({
-  args: { ids: v.array(v.string()) },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query('exercises')
-      .filter((q) => args.ids.some((id) => q.eq('_id', id)))
-      .collect();
-  },
-});
+export const findByIds = async (ctx: QueryCtx, { ids }: { ids: Id<'exercises'>[] }) => {
+  return await ctx.db
+    .query('exercises')
+    .filter((q) => ids.some((id) => q.eq(q.field('_id'), id)))
+    .collect();
+};
 
 export const list = query({
   handler: async (ctx) => {

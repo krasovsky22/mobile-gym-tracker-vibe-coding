@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
+import { query, mutation, QueryCtx } from './_generated/server';
+import { Id } from './_generated/dataModel';
 
-import { mutation, query } from './_generated/server';
 import { getUserId } from './users';
 
 export type ExerciseSet = {
@@ -47,27 +48,27 @@ export const create = mutation({
   },
 });
 
-export const getByTrackedWorkout = query({
-  args: { trackedWorkoutId: v.id('trackedWorkouts') },
-  handler: async (ctx, args) => {
-    const exercises = await ctx.db
-      .query('trackedWorkoutExercises')
-      .filter((q) => q.eq(q.field('trackedWorkoutId'), args.trackedWorkoutId))
-      .collect();
+export const getWithSetsByTrackedWorkout = async (
+  ctx: QueryCtx,
+  { trackedWorkoutId }: { trackedWorkoutId: Id<'trackedWorkouts'> }
+) => {
+  const trackedWorkoutExercises = await ctx.db
+    .query('trackedWorkoutExercises')
+    .filter((q) => q.eq(q.field('trackedWorkoutId'), trackedWorkoutId))
+    .collect();
 
-    // For each exercise, get its sets
-    return await Promise.all(
-      exercises.map(async (exercise) => {
-        const sets = await ctx.db
-          .query('trackedWorkoutExerciseSets')
-          .filter((q) => q.eq(q.field('trackedWorkoutExerciseId'), exercise._id))
-          .collect();
+  // For each exercise, get its sets
+  return await Promise.all(
+    trackedWorkoutExercises.map(async (trackedWorkoutExercise) => {
+      const sets = await ctx.db
+        .query('trackedWorkoutExerciseSets')
+        .filter((q) => q.eq(q.field('trackedWorkoutExerciseId'), trackedWorkoutExercise._id))
+        .collect();
 
-        return {
-          ...exercise,
-          sets: sets.sort((a, b) => a.setNumber - b.setNumber),
-        };
-      })
-    );
-  },
-});
+      return {
+        ...trackedWorkoutExercise,
+        sets: sets.sort((a, b) => a.setNumber - b.setNumber),
+      };
+    })
+  );
+};
