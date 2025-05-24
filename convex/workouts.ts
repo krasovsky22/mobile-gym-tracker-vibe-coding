@@ -11,22 +11,26 @@ export const list = query({
   },
 });
 
-export const get = async (ctx: QueryCtx, { id }: { id: Id<'workouts'> }) => {
-  const workout = await ctx.db.get(id);
+export const get = query({
+  args: { id: v.id('workouts') },
+  handler: async (ctx, args) => {
+    const { id } = args;
+    const workout = await ctx.db.get(id);
 
-  if (!workout) {
-    return null;
-  }
+    if (!workout) {
+      return null;
+    }
 
-  const exercises = await Exercises.findByIds(ctx, {
-    ids: workout.exercises.map((e) => e.exerciseId),
-  });
+    const exercises = await Exercises.findByIds(ctx, {
+      ids: workout.exercises.map((e) => e.exerciseId),
+    });
 
-  return {
-    ...workout,
-    exercises,
-  };
-};
+    return {
+      ...workout,
+      exercises,
+    };
+  },
+});
 
 export const create = mutation({
   args: {

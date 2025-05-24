@@ -37,6 +37,10 @@ const schema = defineSchema({
     trackedWorkoutId: v.id('trackedWorkouts'),
     exerciseId: v.id('exercises'),
     userId: v.id('users'),
+    status: v.union(v.literal('started'), v.literal('in_progress'), v.literal('completed')),
+    updatedAt: v.number(),
+    createdAt: v.number(),
+    completedAt: v.union(v.number(), v.null()),
   })
     .index('by_tracked_workout', ['trackedWorkoutId'])
     .index('by_user', ['userId']),
