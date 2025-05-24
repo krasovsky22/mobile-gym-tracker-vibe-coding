@@ -21,13 +21,8 @@ export const get = query({
       return null;
     }
 
-    const exercises = await Exercises.findByIds(ctx, {
-      ids: workout.exercises.map((e) => e.exerciseId),
-    });
-
     return {
       ...workout,
-      exercises,
     };
   },
 });

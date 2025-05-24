@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
-import { query, mutation, QueryCtx } from './_generated/server';
-import { Id } from './_generated/dataModel';
 
+import { Id } from './_generated/dataModel';
+import { query, mutation, QueryCtx } from './_generated/server';
 import { getUserId } from './users';
 
 export type ExerciseSet = {
@@ -30,6 +30,10 @@ export const create = mutation({
       trackedWorkoutId: args.trackedWorkoutId,
       exerciseId: args.exerciseId,
       userId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status: 'started',
+      completedAt: null,
     });
 
     // Then create all the sets for this exercise

@@ -80,12 +80,12 @@ export const remove = mutation({
   },
 });
 
-export const findByIds = async (ctx: QueryCtx, { ids }: { ids: Id<'exercises'>[] }) => {
-  return await ctx.db
-    .query('exercises')
-    .filter((q) => ids.some((id) => q.eq(q.field('_id'), id)))
-    .collect();
-};
+export const findByIds = query({
+  args: { ids: v.array(v.id('exercises')) },
+  handler: async (ctx, args) => {
+    return await Promise.all(args.ids.map((id) => ctx.db.get(id)));
+  },
+});
 
 export const list = query({
   handler: async (ctx) => {

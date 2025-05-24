@@ -1,10 +1,8 @@
 import { v } from 'convex/values';
 
-import { api } from './_generated/api';
-import { internalQuery, mutation, query } from './_generated/server';
+import { Id } from './_generated/dataModel';
+import { mutation, query } from './_generated/server';
 import { getUserId } from './users';
-import * as Workout from './workouts';
-import * as TrackedWorkoutExercise from './trackedWorkoutExercises';
 
 export const create = mutation({
   args: {
@@ -87,20 +85,61 @@ export const get = query({
       return null;
     }
 
-    const workout = await Workout.get(ctx, { id: trackedWorkout.workoutId });
-
+    // Get the original workout details
+    const workout = await ctx.db.get(trackedWorkout.workoutId);
     if (!workout) {
       throw new Error('Workout not found');
     }
 
-    const trackedWorkoutExercises = await TrackedWorkoutExercise.getWithSetsByTrackedWorkout(ctx, {
-      trackedWorkoutId: args.id,
-    });
+    type WorkoutExercise = {
+      exerciseId: Id<'exercises'>;
+      sets: number;
+    };
+
+    // Get all exercises for the workout
+    const workoutExercises = workout.exercises as WorkoutExercise[];
+    const workoutExerciseIds = workoutExercises.map((ex) => ex.exerciseId);
+    const exercises = await Promise.all(workoutExerciseIds.map((id) => ctx.db.get(id)));
+
+    // Combine workout with its exercises
+    const workoutWithExercises = {
+      ...workout,
+      exercises: workoutExercises.map((ex, index) => ({
+        ...ex,
+        exercise: exercises[index],
+      })),
+    };
+
+    // Get all tracked exercises for this workout
+    const trackedExercises = await ctx.db
+      .query('trackedWorkoutExercises')
+      .filter((q) => q.eq(q.field('trackedWorkoutId'), args.id))
+      .collect();
+
+    // Get exercise details and sets for each tracked exercise
+    const trackedExercisesWithDetails = await Promise.all(
+      trackedExercises.map(async (trackedExercise) => {
+        // Get the exercise details
+        const exerciseDetails = await ctx.db.get(trackedExercise.exerciseId);
+
+        // Get all sets for this exercise
+        const sets = await ctx.db
+          .query('trackedWorkoutExerciseSets')
+          .filter((q) => q.eq(q.field('trackedWorkoutExerciseId'), trackedExercise._id))
+          .collect();
+
+        return {
+          ...trackedExercise,
+          exercise: exerciseDetails,
+          sets: sets.sort((a, b) => a.setNumber - b.setNumber),
+        };
+      })
+    );
 
     return {
       ...trackedWorkout,
-      workout,
-      trackedWorkoutExercises,
+      workout: workoutWithExercises,
+      trackedExercises: trackedExercisesWithDetails,
     };
   },
 });
