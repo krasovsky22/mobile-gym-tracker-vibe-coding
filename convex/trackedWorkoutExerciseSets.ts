@@ -30,3 +30,24 @@ export const getByTrackedWorkoutExercise = query({
       .collect();
   },
 });
+
+export const update = mutation({
+  args: {
+    id: v.id('trackedWorkoutExerciseSets'),
+    isCompleted: v.boolean(),
+    weight: v.optional(v.number()),
+    reps: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getUserId(ctx)!;
+    const { id, ...data } = args;
+
+    // Verify ownership
+    const existingSet = await ctx.db.get(id);
+    if (!existingSet || existingSet.userId !== userId) {
+      throw new Error('Set not found or unauthorized');
+    }
+
+    return await ctx.db.patch(id, data);
+  },
+});

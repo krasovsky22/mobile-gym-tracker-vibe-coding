@@ -30,10 +30,28 @@ export default function TrackWorkoutDetailsScreen() {
     if (!trackedWorkoutData) return;
 
     try {
+      // Find the exercise configuration to get number of sets
+      const exerciseConfig = trackedWorkoutData.workout.exercises.find(
+        (ex) => ex.exerciseId === exerciseId
+      );
+
+      if (!exerciseConfig) {
+        throw new Error('Exercise configuration not found');
+      }
+
+      // Create empty sets based on the workout configuration
+      const emptySets = Array(exerciseConfig.sets)
+        .fill(null)
+        .map(() => ({
+          weight: 0,
+          reps: 0,
+          isCompleted: false,
+        }));
+
       const trackedExercise = await createTrackedExercise({
         trackedWorkoutId: trackedWorkoutData._id,
         exerciseId,
-        sets: [],
+        sets: emptySets,
       });
 
       // Navigate to exercise tracking screen
