@@ -1,7 +1,8 @@
 import { api } from 'convex/_generated/api';
-import { Id } from 'convex/_generated/dataModel';
+import { Id, Doc } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState, useEffect } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -16,18 +17,22 @@ export default function TrackExerciseScreen() {
     exerciseId: string;
   }>();
 
-  // Get tracked workout exercise and exercise details
-  const trackedWorkout = useQuery(api.trackedWorkouts.get, {
-    id: id as Id<'trackedWorkouts'>,
-  });
-
   const trackedWorkoutExercise = useQuery(api.trackedWorkoutExercises.get, {
     id: exerciseId as Id<'trackedWorkoutExercises'>,
   });
+  // Local state for sets
+  const [localSets, setLocalSets] = useState<Doc<'trackedWorkoutExerciseSets'>[]>([]);
+
+  // Initialize local sets when data is loaded
+  useEffect(() => {
+    if (trackedWorkoutExercise?.sets) {
+      setLocalSets(trackedWorkoutExercise.sets);
+    }
+  }, [trackedWorkoutExercise?.sets]);
 
   const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
 
-  if (!trackedWorkout || !trackedWorkoutExercise) {
+  if (!trackedWorkoutExercise) {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ThemedText>Loading exercise...</ThemedText>
@@ -35,41 +40,67 @@ export default function TrackExerciseScreen() {
     );
   }
 
-  const handleUpdateSet = async (
+  const handleUpdateSet = (
     setId: Id<'trackedWorkoutExerciseSets'>,
     field: 'weight' | 'reps',
     value: string
   ) => {
     if (!value) return;
 
-    // Find the current set to get its isCompleted status
-    const set = trackedWorkoutExercise?.sets.find((s) => s._id === setId);
+    setLocalSets((prevSets) =>
+      prevSets.map((set) =>
+        set._id === setId
+          ? {
+              ...set,
+              [field]: field === 'weight' ? parseFloat(value) : parseInt(value, 10),
+            }
+          : set
+      )
+    );
+  };
+
+  const handleSaveChanges = async (setId: Id<'trackedWorkoutExerciseSets'>) => {
+    const set = localSets.find((s) => s._id === setId);
     if (!set) return;
 
     try {
       await updateSet({
         id: setId,
+        weight: set.weight,
+        reps: set.reps,
         isCompleted: set.isCompleted,
-        [field]: field === 'weight' ? parseFloat(value) : parseInt(value, 10),
       });
     } catch (err) {
-      console.error(`Error updating set ${field}:`, err);
-      error(`Failed to update set ${field}`);
+      console.error('Error saving set:', err);
+      error('Failed to save set');
     }
   };
 
   const handleToggleSetComplete = async (setId: Id<'trackedWorkoutExerciseSets'>) => {
-    const set = trackedWorkoutExercise?.sets.find((s) => s._id === setId);
+    const set = localSets.find((s) => s._id === setId);
     if (!set) return;
 
+    // Update local state first
+    setLocalSets((prevSets) =>
+      prevSets.map((s) => (s._id === setId ? { ...s, isCompleted: !s.isCompleted } : s))
+    );
+
+    // Then persist to database
     try {
       await updateSet({
         id: setId,
         isCompleted: !set.isCompleted,
+        weight: set.weight,
+        reps: set.reps,
       });
     } catch (err) {
       console.error('Error updating set:', err);
       error('Failed to update set');
+
+      // Revert local state on error
+      setLocalSets((prevSets) =>
+        prevSets.map((s) => (s._id === setId ? { ...s, isCompleted: set.isCompleted } : s))
+      );
     }
   };
 
@@ -104,7 +135,7 @@ export default function TrackExerciseScreen() {
             <ThemedView className="p-4">
               <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-              {trackedWorkoutExercise?.sets.map((set) => (
+              {localSets.map((set) => (
                 <ThemedView key={set._id} className="mb-2 rounded-lg border border-gray-200 p-4">
                   <ThemedView className="mb-2 flex-row items-center justify-between">
                     <ThemedText className="text-lg font-semibold">Set {set.setNumber}</ThemedText>
@@ -114,7 +145,7 @@ export default function TrackExerciseScreen() {
                       {set.isCompleted ? 'Completed' : 'Complete'}
                     </ThemedButton>
                   </ThemedView>
-                  <ThemedView className="flex-row space-x-4">
+                  <ThemedView className="mb-2 flex-row space-x-4">
                     <ThemedView className="flex-1">
                       <ThemedText className="mb-2 text-gray-600">Weight (kg)</ThemedText>
                       <ThemedTextInput
@@ -134,6 +165,9 @@ export default function TrackExerciseScreen() {
                       />
                     </ThemedView>
                   </ThemedView>
+                  <ThemedButton variant="secondary" onPress={() => handleSaveChanges(set._id)}>
+                    Save Changes
+                  </ThemedButton>
                 </ThemedView>
               ))}
             </ThemedView>
