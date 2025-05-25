@@ -10,6 +10,35 @@ export type ExerciseSet = {
   isCompleted: boolean;
 };
 
+export const get = query({
+  args: { id: v.id('trackedWorkoutExercises') },
+  handler: async (ctx, args) => {
+    const userId = await getUserId(ctx);
+    const trackedWorkoutExercise = await ctx.db.get(args.id);
+    if (!trackedWorkoutExercise || trackedWorkoutExercise.userId !== userId) {
+      throw new Error('Tracked workout exercise not found or unauthorized');
+    }
+
+    const exercise = await ctx.db
+      .query('exercises')
+      .filter((q) => q.eq(q.field('_id'), trackedWorkoutExercise.exerciseId))
+      .first();
+    if (!exercise) {
+      throw new Error('Exercise not found');
+    }
+    // Get all sets for this tracked workout exercise
+    const sets = await ctx.db
+      .query('trackedWorkoutExerciseSets')
+      .filter((q) => q.eq(q.field('trackedWorkoutExerciseId'), args.id))
+      .collect();
+    return {
+      ...trackedWorkoutExercise,
+      exercise,
+      sets: sets.sort((a, b) => a.setNumber - b.setNumber),
+    };
+  },
+});
+
 export const create = mutation({
   args: {
     trackedWorkoutId: v.id('trackedWorkouts'),

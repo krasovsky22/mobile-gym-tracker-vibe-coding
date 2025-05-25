@@ -21,22 +21,19 @@ export default function TrackExerciseScreen() {
     id: id as Id<'trackedWorkouts'>,
   });
 
-  const exercise = useQuery(api.exercises.get, { id: exerciseId as Id<'exercises'> });
+  const trackedWorkoutExercise = useQuery(api.trackedWorkoutExercises.get, {
+    id: exerciseId as Id<'trackedWorkoutExercises'>,
+  });
 
   const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
 
-  if (!trackedWorkout || !exercise) {
+  if (!trackedWorkout || !trackedWorkoutExercise) {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ThemedText>Loading exercise...</ThemedText>
       </ThemedView>
     );
   }
-
-  // Get the tracked exercise for this exercise
-  const trackedExercise = trackedWorkout.trackedExercises?.find(
-    (te) => te.exerciseId === exerciseId
-  );
 
   const handleUpdateSet = async (
     setId: Id<'trackedWorkoutExerciseSets'>,
@@ -46,7 +43,7 @@ export default function TrackExerciseScreen() {
     if (!value) return;
 
     // Find the current set to get its isCompleted status
-    const set = trackedExercise?.sets.find((s) => s._id === setId);
+    const set = trackedWorkoutExercise?.sets.find((s) => s._id === setId);
     if (!set) return;
 
     try {
@@ -62,7 +59,7 @@ export default function TrackExerciseScreen() {
   };
 
   const handleToggleSetComplete = async (setId: Id<'trackedWorkoutExerciseSets'>) => {
-    const set = trackedExercise?.sets.find((s) => s._id === setId);
+    const set = trackedWorkoutExercise?.sets.find((s) => s._id === setId);
     if (!set) return;
 
     try {
@@ -88,22 +85,26 @@ export default function TrackExerciseScreen() {
               onPress={() => router.back()}>
               Back
             </ThemedButton>
-            <ThemedText className="text-xl font-semibold">{exercise.name}</ThemedText>
+            <ThemedText className="text-xl font-semibold">
+              {trackedWorkoutExercise.exercise.name}
+            </ThemedText>
           </ThemedView>
 
           <ScrollView className="flex-1">
             <ThemedView className="p-4">
               <ThemedText className="text-lg font-semibold">Exercise Details</ThemedText>
               <ThemedText className="text-gray-600">
-                Muscle Group: {exercise.muscleGroup}
+                Muscle Group: {trackedWorkoutExercise.exercise.muscleGroup}
               </ThemedText>
-              <ThemedText className="text-gray-600">Category: {exercise.category}</ThemedText>
+              <ThemedText className="text-gray-600">
+                Category: {trackedWorkoutExercise.exercise.category}
+              </ThemedText>
             </ThemedView>
 
             <ThemedView className="p-4">
               <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-              {trackedExercise?.sets.map((set) => (
+              {trackedWorkoutExercise?.sets.map((set) => (
                 <ThemedView key={set._id} className="mb-2 rounded-lg border border-gray-200 p-4">
                   <ThemedView className="mb-2 flex-row items-center justify-between">
                     <ThemedText className="text-lg font-semibold">Set {set.setNumber}</ThemedText>
