@@ -12,7 +12,7 @@ import { ThemedButton, ThemedText, ThemedTextInput, ThemedView } from '~/theme';
 export default function TrackExerciseScreen() {
   const router = useRouter();
   const { error } = useAlert();
-  const { id, exerciseId } = useLocalSearchParams<{
+  const { exerciseId } = useLocalSearchParams<{
     id: string;
     exerciseId: string;
   }>();
@@ -20,17 +20,54 @@ export default function TrackExerciseScreen() {
   const trackedWorkoutExercise = useQuery(api.trackedWorkoutExercises.get, {
     id: exerciseId as Id<'trackedWorkoutExercises'>,
   });
+
+  const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
+  const createSet = useMutation(api.trackedWorkoutExerciseSets.create);
+
   // Local state for sets
   const [localSets, setLocalSets] = useState<Doc<'trackedWorkoutExerciseSets'>[]>([]);
+  // Track sets that need to be saved
+  const [pendingSaves, setPendingSaves] = useState<Set<Id<'trackedWorkoutExerciseSets'>>>(
+    new Set()
+  );
 
   // Initialize local sets when data is loaded
   useEffect(() => {
     if (trackedWorkoutExercise?.sets) {
+      console.log('loaded sets:', trackedWorkoutExercise.sets);
       setLocalSets(trackedWorkoutExercise.sets);
     }
   }, [trackedWorkoutExercise?.sets]);
 
-  const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
+  // Auto-save pending changes after 2 seconds of inactivity
+  useEffect(() => {
+    if (pendingSaves.size === 0) return;
+
+    const timeoutId = setTimeout(async () => {
+      const setsToSave = Array.from(pendingSaves);
+
+      for (const setId of setsToSave) {
+        const set = localSets.find((s) => s._id === setId);
+        if (set) {
+          try {
+            await updateSet({
+              id: setId,
+              weight: set.weight,
+              reps: set.reps,
+              isCompleted: set.isCompleted,
+            });
+          } catch (err) {
+            console.error('Error auto-saving set:', err);
+            // Don't show error for auto-save failures to avoid disrupting the user
+          }
+        }
+      }
+
+      setPendingSaves(new Set());
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [pendingSaves, localSets, updateSet]);
 
   if (!trackedWorkoutExercise) {
     return (
@@ -57,22 +94,41 @@ export default function TrackExerciseScreen() {
           : set
       )
     );
+
+    // Mark this set as needing to be saved
+    setPendingSaves((prev) => new Set(prev).add(setId));
   };
 
-  const handleSaveChanges = async (setId: Id<'trackedWorkoutExerciseSets'>) => {
-    const set = localSets.find((s) => s._id === setId);
-    if (!set) return;
+  const handleAddSet = async () => {
+    if (!trackedWorkoutExercise) return;
 
     try {
-      await updateSet({
-        id: setId,
-        weight: set.weight,
-        reps: set.reps,
-        isCompleted: set.isCompleted,
+      const newSetNumber = localSets.length + 1;
+      const newSetId = await createSet({
+        trackedWorkoutExerciseId: trackedWorkoutExercise._id,
+        setNumber: newSetNumber,
+        weight: 0,
+        reps: 0,
+        isCompleted: false,
       });
+
+      // Add the new set to local state (we'll get it from the next query refresh)
+      // For now, create a placeholder that matches the expected structure
+      const newSet: Doc<'trackedWorkoutExerciseSets'> = {
+        _id: newSetId,
+        _creationTime: Date.now(),
+        trackedWorkoutExerciseId: trackedWorkoutExercise._id,
+        setNumber: newSetNumber,
+        weight: 0,
+        reps: 0,
+        isCompleted: false,
+        userId: trackedWorkoutExercise.userId, // Use the same userId as the parent exercise
+      };
+
+      setLocalSets((prevSets) => [...prevSets, newSet]);
     } catch (err) {
-      console.error('Error saving set:', err);
-      error('Failed to save set');
+      console.error('Error adding set:', err);
+      error('Failed to add set');
     }
   };
 
@@ -135,41 +191,54 @@ export default function TrackExerciseScreen() {
             <ThemedView className="p-4">
               <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-              {localSets.map((set) => (
-                <ThemedView key={set._id} className="mb-2 rounded-lg border border-gray-200 p-4">
-                  <ThemedView className="mb-2 flex-row items-center justify-between">
-                    <ThemedText className="text-lg font-semibold">Set {set.setNumber}</ThemedText>
+              <ThemedView className="mb-2 rounded-lg border border-gray-200 p-4">
+                {localSets.map((set) => (
+                  <ThemedView
+                    className="mb-2 flex-row items-center justify-between gap-3"
+                    key={set._id}>
+                    <ThemedText className="mt-4 text-lg font-semibold">{set.setNumber}.</ThemedText>
+
+                    <ThemedView className="mb-2 flex-1 flex-row space-x-4">
+                      <ThemedView className="flex-1">
+                        <ThemedText className="mb-2 text-gray-600">Weight (kg)</ThemedText>
+                        <ThemedTextInput
+                          value={set.weight.toString()}
+                          onChangeText={(value) => handleUpdateSet(set._id, 'weight', value)}
+                          keyboardType="numeric"
+                          placeholder="Enter weight"
+                        />
+                      </ThemedView>
+                      <ThemedView className="flex-1">
+                        <ThemedText className="mb-2 text-gray-600">Reps</ThemedText>
+                        <ThemedTextInput
+                          value={set.reps.toString()}
+                          onChangeText={(value) => handleUpdateSet(set._id, 'reps', value)}
+                          keyboardType="numeric"
+                          placeholder="Enter reps"
+                        />
+                      </ThemedView>
+                    </ThemedView>
+
                     <ThemedButton
+                      className="mt-4"
                       variant={set.isCompleted ? 'secondary' : 'primary'}
+                      icon={set.isCompleted ? 'checkmark-circle' : 'add-circle-outline'}
                       onPress={() => handleToggleSetComplete(set._id)}>
                       {set.isCompleted ? 'Completed' : 'Complete'}
                     </ThemedButton>
                   </ThemedView>
-                  <ThemedView className="mb-2 flex-row space-x-4">
-                    <ThemedView className="flex-1">
-                      <ThemedText className="mb-2 text-gray-600">Weight (kg)</ThemedText>
-                      <ThemedTextInput
-                        value={set.weight.toString()}
-                        onChangeText={(value) => handleUpdateSet(set._id, 'weight', value)}
-                        keyboardType="numeric"
-                        placeholder="Enter weight"
-                      />
-                    </ThemedView>
-                    <ThemedView className="flex-1">
-                      <ThemedText className="mb-2 text-gray-600">Reps</ThemedText>
-                      <ThemedTextInput
-                        value={set.reps.toString()}
-                        onChangeText={(value) => handleUpdateSet(set._id, 'reps', value)}
-                        keyboardType="numeric"
-                        placeholder="Enter reps"
-                      />
-                    </ThemedView>
-                  </ThemedView>
-                  <ThemedButton variant="secondary" onPress={() => handleSaveChanges(set._id)}>
-                    Save Changes
-                  </ThemedButton>
-                </ThemedView>
-              ))}
+                ))}
+                <ThemedButton
+                  className="ml-auto w-[120px]"
+                  variant="secondary"
+                  icon="add"
+                  onPress={() => handleAddSet()}>
+                  Add Set
+                </ThemedButton>
+                {/* <ThemedButton variant="secondary" onPress={() => handleSaveChanges(set._id)}>
+                  Save Changes
+                </ThemedButton> */}
+              </ThemedView>
             </ThemedView>
           </ScrollView>
         </SafeAreaView>
