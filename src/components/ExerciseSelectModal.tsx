@@ -58,16 +58,16 @@ export default function ExerciseSelectModal({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <ThemedView className="flex-1 bg-white">
-        <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
-          <TouchableOpacity className="mr-4 rounded-lg bg-gray-100 px-4 py-2" onPress={onClose}>
-            <ThemedText className="font-semibold text-gray-700">Cancel</ThemedText>
+        <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
+          <TouchableOpacity className="mr-4 rounded-lg bg-neutral-100 px-4 py-2" onPress={onClose}>
+            <ThemedText className="font-semibold text-neutral-700">Cancel</ThemedText>
           </TouchableOpacity>
           <ThemedText className="text-xl font-semibold">Select Exercise</ThemedText>
         </ThemedView>
 
         <ThemedView className="flex-1 p-4">
           <TextInput
-            className="mb-4 rounded-lg border border-gray-300 p-3"
+            className="mb-4 rounded-lg border border-neutral-300 p-3"
             placeholder="Search exercises..."
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -75,15 +75,15 @@ export default function ExerciseSelectModal({
 
           <ScrollView className="flex-1">
             {filteredExercises?.length === 0 ? (
-              <ThemedText className="text-center text-gray-500">No exercises found</ThemedText>
+              <ThemedText className="text-center text-neutral-500">No exercises found</ThemedText>
             ) : (
               filteredExercises?.map((exercise) => (
                 <TouchableOpacity
                   key={exercise._id}
-                  className="mb-2 rounded-lg border border-gray-200 p-4"
+                  className="mb-2 rounded-lg border border-neutral-200 p-4"
                   onPress={() => onSelect(exercise._id)}>
                   <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
-                  <ThemedText className="text-gray-600">{exercise.category}</ThemedText>
+                  <ThemedText className="text-neutral-600">{exercise.category}</ThemedText>
                 </TouchableOpacity>
               ))
             )}

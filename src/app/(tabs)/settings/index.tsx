@@ -18,42 +18,42 @@ export default function SettingsScreen() {
 
         <ThemedView className="gap-5 space-y-4">
           <TouchableOpacity
-            className="rounded-lg border border-gray-200 p-4"
+            className="rounded-lg border border-neutral-200 p-4"
             onPress={() => router.push('/settings/exercises')}>
             <ThemedText className="text-lg font-semibold">Exercises</ThemedText>
             <ThemedText className="text-neutral-500">Manage your exercise library</ThemedText>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-lg border border-gray-200 p-4"
+            className="rounded-lg border border-neutral-200 p-4"
             onPress={() => router.push('/settings/workouts')}>
             <ThemedText className="text-lg font-semibold">Workouts</ThemedText>
             <ThemedText className="text-neutral-500">Manage your workout library</ThemedText>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-lg border border-gray-200 p-4"
+            className="rounded-lg border border-neutral-200 p-4"
             onPress={() => router.push('/settings/account')}>
             <ThemedText className="text-lg font-semibold">Account</ThemedText>
             <ThemedText className="text-neutral-500">Manage your account settings</ThemedText>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-lg border border-gray-200 p-4"
+            className="rounded-lg border border-neutral-200 p-4"
             onPress={() => router.push('/settings/preferences')}>
             <ThemedText className="text-lg font-semibold">Preferences</ThemedText>
             <ThemedText className="text-neutral-500">Customize your app experience</ThemedText>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-lg border border-gray-200 p-4"
+            className="rounded-lg border border-neutral-200 p-4"
             onPress={() => router.push('/settings/about')}>
             <ThemedText className="text-lg font-semibold">About</ThemedText>
             <ThemedText className="text-neutral-500">App version 1.0.0</ThemedText>
           </TouchableOpacity>
         </ThemedView>
 
-        <TouchableOpacity className="mt-8 rounded-lg bg-red-500 p-4" onPress={signOut}>
+        <TouchableOpacity className="mt-8 rounded-lg bg-danger-500 p-4" onPress={signOut}>
           <ThemedText className="text-center font-semibold text-white">Sign Out</ThemedText>
         </TouchableOpacity>
       </ThemedView>

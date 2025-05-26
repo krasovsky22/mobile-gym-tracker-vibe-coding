@@ -41,16 +41,16 @@ export function ThemedCheckbox({
 
   const getIconColor = () => {
     if (checked) {
-      return '#22c55e'; // green-500
+      return '#22c55e'; // success-500
     }
-    return isDarkMode ? '#9ca3af' : '#6b7280'; // gray-400/500
+    return isDarkMode ? '#94a3b8' : '#64748b'; // neutral-400/500
   };
 
   const getTextColor = () => {
     if (checked) {
-      return isDarkMode ? 'text-green-300' : 'text-green-600';
+      return isDarkMode ? 'text-success-300' : 'text-success-600';
     }
-    return 'text-gray-600';
+    return 'text-neutral-600';
   };
 
   return (

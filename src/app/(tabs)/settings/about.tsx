@@ -14,12 +14,12 @@ export default function AboutScreen() {
       </ThemedView>
 
       <ThemedView className="space-y-4">
-        <ThemedView className="rounded-lg border border-gray-200 p-4">
+        <ThemedView className="rounded-lg border border-neutral-200 p-4">
           <ThemedText className="text-lg font-semibold">Version</ThemedText>
           <ThemedText className="text-neutral-500">1.0.0</ThemedText>
         </ThemedView>
 
-        <ThemedView className="rounded-lg border border-gray-200 p-4">
+        <ThemedView className="rounded-lg border border-neutral-200 p-4">
           <ThemedText className="text-lg font-semibold">Description</ThemedText>
           <ThemedText className="text-neutral-500">
             Gym Tracker is a mobile application designed to help you track your workouts and achieve
@@ -27,16 +27,16 @@ export default function AboutScreen() {
           </ThemedText>
         </ThemedView>
 
-        <ThemedView className="rounded-lg border border-gray-200 p-4">
+        <ThemedView className="rounded-lg border border-neutral-200 p-4">
           <ThemedText className="text-lg font-semibold">Developer</ThemedText>
           <ThemedText className="text-neutral-500">Your Name</ThemedText>
         </ThemedView>
 
         <TouchableOpacity
-          className="rounded-lg border border-gray-200 p-4"
+          className="rounded-lg border border-neutral-200 p-4"
           onPress={handleOpenGitHub}>
           <ThemedText className="text-lg font-semibold">GitHub Repository</ThemedText>
-          <ThemedText className="text-blue-500">
+          <ThemedText className="text-primary-500">
             github.com/yourusername/mobile-gym-tracker-vibe
           </ThemedText>
         </TouchableOpacity>

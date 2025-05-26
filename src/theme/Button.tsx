@@ -15,28 +15,28 @@ interface ThemedButtonProps extends TouchableOpacityProps {
 
 const variantStyles = {
   primary: {
-    container: 'bg-blue-500',
+    container: 'bg-primary-500',
     text: 'text-white',
   },
   secondary: {
-    container: 'bg-neutral-500 dark:bg-gray-800',
-    text: 'text-gray-900 dark:text-gray-100',
+    container: 'bg-secondary-100 dark:bg-secondary-800',
+    text: 'text-secondary-700 dark:text-secondary-300',
   },
   danger: {
-    container: 'bg-red-500',
+    container: 'bg-danger-500',
     text: 'text-white',
   },
   success: {
-    container: 'bg-green-500',
+    container: 'bg-success-500',
     text: 'text-white',
   },
   warning: {
-    container: 'bg-orange-500',
+    container: 'bg-warning-500',
     text: 'text-white',
   },
   outline: {
-    container: 'bg-transparent border-2 border-gray-300 dark:border-gray-600',
-    text: 'text-gray-700 dark:text-gray-300',
+    container: 'bg-transparent border-2 border-neutral-300 dark:border-neutral-600',
+    text: 'text-neutral-700 dark:text-neutral-300',
   },
 };
 
@@ -71,12 +71,12 @@ export function ThemedButton({
 
   // Get icon color based on variant
   const getIconColor = () => {
-    if (disabled) return '#9ca3af';
+    if (disabled) return '#94a3b8'; // neutral-400
     switch (variant) {
       case 'primary':
         return '#ffffff';
       case 'secondary':
-        return '#374151'; // gray-700
+        return '#a21caf'; // secondary-700
       case 'danger':
         return '#ffffff';
       case 'success':
@@ -84,7 +84,7 @@ export function ThemedButton({
       case 'warning':
         return '#ffffff';
       case 'outline':
-        return '#374151'; // gray-700
+        return '#334155'; // neutral-700
       default:
         return '#ffffff';
     }

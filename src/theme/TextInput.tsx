@@ -19,10 +19,10 @@ export function ThemedTextInput({
       className={`rounded-lg border p-3 ${
         isDarkMode
           ? 'border-neutral-700 bg-neutral-800 text-white'
-          : 'border-gray-300 bg-white text-black'
+          : 'border-neutral-300 bg-white text-black'
       } ${className}`}
       style={style}
-      placeholderTextColor={placeholderTextColor ?? (isDarkMode ? '#6b7280' : '#9ca3af')}
+      placeholderTextColor={placeholderTextColor ?? (isDarkMode ? '#64748b' : '#94a3b8')}
       {...props}
     />
   );

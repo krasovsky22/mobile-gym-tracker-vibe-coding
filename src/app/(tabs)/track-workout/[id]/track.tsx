@@ -80,7 +80,7 @@ export default function TrackWorkoutDetailsScreen() {
     <SafeAreaProvider>
       <ThemedView className="flex-1">
         <SafeAreaView className="flex-1">
-          <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
+          <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
             <ThemedButton
               variant="secondary"
               size="md"
@@ -106,12 +106,12 @@ export default function TrackWorkoutDetailsScreen() {
                 return (
                   <ThemedView
                     key={exercise._id}
-                    className="mb-4 rounded-lg border border-gray-200 p-4">
+                    className="mb-4 rounded-lg border border-neutral-200 p-4">
                     <ThemedView className="flex-row items-center justify-between">
                       <ThemedView className="flex-1">
                         <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
-                        <ThemedText className="text-gray-600">{exercise.muscleGroup}</ThemedText>
-                        <ThemedText className="text-gray-600">
+                        <ThemedText className="text-neutral-600">{exercise.muscleGroup}</ThemedText>
+                        <ThemedText className="text-neutral-600">
                           Sets: {workoutExercise.sets}
                         </ThemedText>
                       </ThemedView>
@@ -127,11 +127,11 @@ export default function TrackWorkoutDetailsScreen() {
                           ?.find((te) => te.exerciseId === exercise._id)
                           ?.sets.map((set, index) => (
                             <ThemedView key={index} className="mt-1 flex-row items-center">
-                              <ThemedText className="text-sm text-gray-600">
+                              <ThemedText className="text-sm text-neutral-600">
                                 Set {set.setNumber}: {set.weight}kg × {set.reps} reps
                               </ThemedText>
                               {set.isCompleted && (
-                                <ThemedText className="ml-2 text-sm text-green-600">✓</ThemedText>
+                                <ThemedText className="ml-2 text-sm text-success-600">✓</ThemedText>
                               )}
                             </ThemedView>
                           ))}
@@ -143,8 +143,8 @@ export default function TrackWorkoutDetailsScreen() {
             </ThemedView>
           </ScrollView>
 
-          <ThemedView className="border-t border-gray-200 p-4">
-            <ThemedText className="mb-2 text-center text-sm text-gray-600">
+          <ThemedView className="border-t border-neutral-200 p-4">
+            <ThemedText className="mb-2 text-center text-sm text-neutral-600">
               Track all exercises to complete the workout
             </ThemedText>
             <ThemedButton

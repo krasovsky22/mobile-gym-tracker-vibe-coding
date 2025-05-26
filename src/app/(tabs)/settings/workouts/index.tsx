@@ -65,14 +65,14 @@ export default function WorkoutsScreen() {
 
         <ScrollView className="flex-1 px-4">
           {filteredWorkouts?.map((workout: Workout) => (
-            <ThemedView key={workout._id} className="mb-4 rounded-lg border border-gray-200 p-4">
+            <ThemedView key={workout._id} className="mb-4 rounded-lg border border-neutral-200 p-4">
               <ThemedView className="flex-row justify-between">
                 <ThemedView className="flex-1">
                   <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
-                  <ThemedText className="text-gray-600">
+                  <ThemedText className="text-neutral-600">
                     {workout.exercises.length} exercises
                   </ThemedText>
-                  <ThemedText className="text-gray-600">
+                  <ThemedText className="text-neutral-600">
                     Total sets:{' '}
                     {workout.exercises.reduce(
                       (sum: number, ex: WorkoutExercise) => sum + ex.sets,
@@ -99,7 +99,7 @@ export default function WorkoutsScreen() {
           ))}
         </ScrollView>
 
-        <ThemedView className="border-t border-gray-200 bg-white p-4">
+        <ThemedView className="border-t border-neutral-200 bg-white p-4">
           <ThemedButton variant="primary" onPress={() => router.push('/settings/workouts/create')}>
             Create Workout
           </ThemedButton>

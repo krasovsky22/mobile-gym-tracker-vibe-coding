@@ -164,7 +164,7 @@ export default function TrackExerciseScreen() {
     <SafeAreaProvider>
       <ThemedView className="flex-1">
         <SafeAreaView className="flex-1">
-          <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
+          <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
             <ThemedButton
               variant="secondary"
               size="md"
@@ -180,10 +180,10 @@ export default function TrackExerciseScreen() {
           <ScrollView className="flex-1" contentContainerStyle={{ flex: 1 }}>
             <ThemedView className="p-4">
               <ThemedText className="text-lg font-semibold">Exercise Details</ThemedText>
-              <ThemedText className="text-gray-600">
+              <ThemedText className="text-neutral-600">
                 Muscle Group: {trackedWorkoutExercise.exercise.muscleGroup}
               </ThemedText>
-              <ThemedText className="text-gray-600">
+              <ThemedText className="text-neutral-600">
                 Category: {trackedWorkoutExercise.exercise.category}
               </ThemedText>
             </ThemedView>
@@ -191,7 +191,7 @@ export default function TrackExerciseScreen() {
             <ThemedView className="flex-1 p-4">
               <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-              <ThemedView className="mb-2 flex-1 rounded-lg border border-gray-200 p-4">
+              <ThemedView className="mb-2 flex-1 rounded-lg border border-neutral-200 p-4">
                 {localSets.map((set) => (
                   <ThemedView
                     className="mb-2 flex-row items-center justify-between gap-3"
@@ -200,7 +200,7 @@ export default function TrackExerciseScreen() {
 
                     <ThemedView className="mb-2 flex-1 flex-row space-x-4">
                       <ThemedView className="flex-1">
-                        <ThemedText className="mb-2 text-gray-600">Weight (kg)</ThemedText>
+                        <ThemedText className="mb-2 text-neutral-600">Weight (kg)</ThemedText>
                         <ThemedTextInput
                           value={set.weight.toString()}
                           onChangeText={(value) => handleUpdateSet(set._id, 'weight', value)}
@@ -209,7 +209,7 @@ export default function TrackExerciseScreen() {
                         />
                       </ThemedView>
                       <ThemedView className="flex-1">
-                        <ThemedText className="mb-2 text-gray-600">Reps</ThemedText>
+                        <ThemedText className="mb-2 text-neutral-600">Reps</ThemedText>
                         <ThemedTextInput
                           value={set.reps.toString()}
                           onChangeText={(value) => handleUpdateSet(set._id, 'reps', value)}

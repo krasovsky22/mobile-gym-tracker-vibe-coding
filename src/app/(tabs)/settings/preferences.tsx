@@ -19,7 +19,7 @@ export default function PreferencesScreen() {
           </ThemedView>
 
           <ThemedView className="gap-5 space-y-4">
-            <ThemedView className="rounded-lg border border-gray-200 p-4">
+            <ThemedView className="rounded-lg border border-neutral-200 p-4">
               <ThemedView className="flex-row items-center justify-between">
                 <ThemedView>
                   <ThemedText className="text-lg font-semibold">Dark Mode</ThemedText>
@@ -33,7 +33,7 @@ export default function PreferencesScreen() {
               </ThemedView>
             </ThemedView>
 
-            <ThemedView className="rounded-lg border border-gray-200 p-4">
+            <ThemedView className="rounded-lg border border-neutral-200 p-4">
               <ThemedView className="flex-row items-center justify-between">
                 <ThemedView>
                   <ThemedText className="text-lg font-semibold">Notifications</ThemedText>
@@ -47,7 +47,7 @@ export default function PreferencesScreen() {
               </ThemedView>
             </ThemedView>
 
-            <ThemedView className="rounded-lg border border-gray-200 p-4">
+            <ThemedView className="rounded-lg border border-neutral-200 p-4">
               <ThemedView className="flex-row items-center justify-between">
                 <ThemedView>
                   <ThemedText className="text-lg font-semibold">Sound Effects</ThemedText>
