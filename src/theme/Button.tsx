@@ -5,7 +5,7 @@ import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { ThemedText } from './Text';
 
 interface ThemedButtonProps extends TouchableOpacityProps {
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   children: React.ReactNode;
@@ -19,12 +19,24 @@ const variantStyles = {
     text: 'text-white',
   },
   secondary: {
-    container: 'bg-blue-500/10 dark:bg-blue-500/20',
-    text: 'text-blue-700 dark:text-blue-300',
+    container: 'bg-neutral-500 dark:bg-gray-800',
+    text: 'text-gray-900 dark:text-gray-100',
   },
   danger: {
-    container: 'bg-red-500/10 dark:bg-red-500/20',
-    text: 'text-red-700 dark:text-red-300',
+    container: 'bg-red-500',
+    text: 'text-white',
+  },
+  success: {
+    container: 'bg-green-500',
+    text: 'text-white',
+  },
+  warning: {
+    container: 'bg-orange-500',
+    text: 'text-white',
+  },
+  outline: {
+    container: 'bg-transparent border-2 border-gray-300 dark:border-gray-600',
+    text: 'text-gray-700 dark:text-gray-300',
   },
 };
 
@@ -64,9 +76,15 @@ export function ThemedButton({
       case 'primary':
         return '#ffffff';
       case 'secondary':
-        return '#1d4ed8'; // blue-700
+        return '#374151'; // gray-700
       case 'danger':
-        return '#dc2626'; // red-600
+        return '#ffffff';
+      case 'success':
+        return '#ffffff';
+      case 'warning':
+        return '#ffffff';
+      case 'outline':
+        return '#374151'; // gray-700
       default:
         return '#ffffff';
     }

@@ -7,7 +7,7 @@ import { SafeAreaView, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useAlert } from '~/context/alert';
-import { ThemedButton, ThemedText, ThemedTextInput, ThemedView } from '~/theme';
+import { ThemedButton, ThemedText, ThemedTextInput, ThemedView, ThemedCheckbox } from '~/theme';
 
 export default function TrackExerciseScreen() {
   const router = useRouter();
@@ -177,7 +177,7 @@ export default function TrackExerciseScreen() {
             </ThemedText>
           </ThemedView>
 
-          <ScrollView className="flex-1">
+          <ScrollView className="flex-1" contentContainerStyle={{ flex: 1 }}>
             <ThemedView className="p-4">
               <ThemedText className="text-lg font-semibold">Exercise Details</ThemedText>
               <ThemedText className="text-gray-600">
@@ -188,10 +188,10 @@ export default function TrackExerciseScreen() {
               </ThemedText>
             </ThemedView>
 
-            <ThemedView className="p-4">
+            <ThemedView className="flex-1 p-4">
               <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-              <ThemedView className="mb-2 rounded-lg border border-gray-200 p-4">
+              <ThemedView className="mb-2 flex-1 rounded-lg border border-gray-200 p-4">
                 {localSets.map((set) => (
                   <ThemedView
                     className="mb-2 flex-row items-center justify-between gap-3"
@@ -219,13 +219,11 @@ export default function TrackExerciseScreen() {
                       </ThemedView>
                     </ThemedView>
 
-                    <ThemedButton
+                    <ThemedCheckbox
+                      checked={set.isCompleted}
+                      onPress={() => handleToggleSetComplete(set._id)}
                       className="mt-4"
-                      variant={set.isCompleted ? 'secondary' : 'primary'}
-                      icon={set.isCompleted ? 'checkmark-circle' : 'add-circle-outline'}
-                      onPress={() => handleToggleSetComplete(set._id)}>
-                      {set.isCompleted ? 'Completed' : 'Complete'}
-                    </ThemedButton>
+                    />
                   </ThemedView>
                 ))}
                 <ThemedButton
@@ -235,10 +233,10 @@ export default function TrackExerciseScreen() {
                   onPress={() => handleAddSet()}>
                   Add Set
                 </ThemedButton>
-                {/* <ThemedButton variant="secondary" onPress={() => handleSaveChanges(set._id)}>
-                  Save Changes
-                </ThemedButton> */}
               </ThemedView>
+              <ThemedButton variant="primary" onPress={() => {}}>
+                Next Exercise
+              </ThemedButton>
             </ThemedView>
           </ScrollView>
         </SafeAreaView>
