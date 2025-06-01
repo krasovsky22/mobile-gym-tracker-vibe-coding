@@ -17,7 +17,7 @@ export default function TrackWorkoutDetailsScreen() {
   const router = useRouter();
   const { error } = useAlert();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const createTrackedExercise = useMutation(api.trackedWorkoutExercises.create);
+  const moveToNextExercise = useMutation(api.trackedWorkoutExercises.moveToNextExercise);
 
   // Query for tracked workout and all related data
   const trackedWorkoutData = useQuery(api.trackedWorkouts.get, {
@@ -30,36 +30,19 @@ export default function TrackWorkoutDetailsScreen() {
     if (!trackedWorkoutData) return;
 
     try {
-      // Find the exercise configuration to get number of sets
-      const exerciseConfig = trackedWorkoutData.workout.exercises.find(
-        (ex) => ex.exerciseId === exerciseId
-      );
-
-      if (!exerciseConfig) {
-        throw new Error('Exercise configuration not found');
-      }
-
-      // Create empty sets based on the workout configuration
-      const emptySets = Array(exerciseConfig.sets)
-        .fill(null)
-        .map(() => ({
-          weight: 0,
-          reps: 0,
-          isCompleted: false,
-        }));
-
-      const trackedExercise = await createTrackedExercise({
-        trackedWorkoutId: trackedWorkoutData._id,
-        exerciseId,
-        sets: emptySets,
+      const trackedExerciseId = await moveToNextExercise({
+        trackedWorkoutId: id as Id<'trackedWorkouts'>,
+        selectedExerciseId: exerciseId as Id<'exercises'>,
       });
+
+      console.log('Tracked exercise created:', trackedExerciseId);
 
       // Navigate to exercise tracking screen
       router.push({
         pathname: '/track-workout/[id]/exercise/[exerciseId]',
         params: {
           id,
-          exerciseId: trackedExercise,
+          exerciseId: trackedExerciseId,
         },
       });
     } catch (err) {
@@ -70,7 +53,7 @@ export default function TrackWorkoutDetailsScreen() {
 
   if (!trackedWorkoutData) {
     return (
-      <ThemedView className="flex-1 items-center justify-center">
+      <ThemedView className="items-center justify-center flex-1">
         <ThemedText>Loading workout...</ThemedText>
       </ThemedView>
     );
@@ -80,7 +63,7 @@ export default function TrackWorkoutDetailsScreen() {
     <SafeAreaProvider>
       <ThemedView className="flex-1">
         <SafeAreaView className="flex-1">
-          <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
+          <ThemedView className="flex-row items-center p-4 border-b border-neutral-200">
             <ThemedButton
               variant="secondary"
               size="md"
@@ -106,7 +89,7 @@ export default function TrackWorkoutDetailsScreen() {
                 return (
                   <ThemedView
                     key={exercise._id}
-                    className="mb-4 rounded-lg border border-neutral-200 p-4">
+                    className="p-4 mb-4 border rounded-lg border-neutral-200">
                     <ThemedView className="flex-row items-center justify-between">
                       <ThemedView className="flex-1">
                         <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
@@ -126,7 +109,7 @@ export default function TrackWorkoutDetailsScreen() {
                         {trackedWorkoutData.trackedExercises
                           ?.find((te) => te.exerciseId === exercise._id)
                           ?.sets.map((set, index) => (
-                            <ThemedView key={index} className="mt-1 flex-row items-center">
+                            <ThemedView key={index} className="flex-row items-center mt-1">
                               <ThemedText className="text-sm text-neutral-600">
                                 Set {set.setNumber}: {set.weight}kg × {set.reps} reps
                               </ThemedText>
@@ -143,8 +126,8 @@ export default function TrackWorkoutDetailsScreen() {
             </ThemedView>
           </ScrollView>
 
-          <ThemedView className="border-t border-neutral-200 p-4">
-            <ThemedText className="mb-2 text-center text-sm text-neutral-600">
+          <ThemedView className="p-4 border-t border-neutral-200">
+            <ThemedText className="mb-2 text-sm text-center text-neutral-600">
               Track all exercises to complete the workout
             </ThemedText>
             <ThemedButton

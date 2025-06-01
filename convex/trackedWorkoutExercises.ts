@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 
-import { Id } from './_generated/dataModel';
+import { api } from './_generated/api';
+import { Doc, Id } from './_generated/dataModel';
 import { query, mutation, QueryCtx } from './_generated/server';
 import { getUserId } from './users';
 
@@ -78,6 +79,64 @@ export const create = mutation({
     );
 
     return trackedWorkoutExercise;
+  },
+});
+
+type TrackedWorkoutType = Doc<'trackedWorkouts'> & {
+  workout: Doc<'workouts'>;
+};
+
+export const moveToNextExercise = mutation({
+  args: {
+    trackedWorkoutId: v.id('trackedWorkouts'),
+    selectedExerciseId: v.optional(v.id('exercises')),
+    currentExerciseId: v.optional(v.id('trackedWorkoutExercises')),
+  },
+  handler: async (ctx, args) => {
+    const { trackedWorkoutId, currentExerciseId, selectedExerciseId } = args;
+
+    const trackedWorkout: TrackedWorkoutType | null = await ctx.runQuery(api.trackedWorkouts.get, {
+      id: trackedWorkoutId,
+    });
+    if (!trackedWorkout) {
+      throw new Error('Unable to find tracked workout');
+    }
+
+    let exerciseConfig;
+
+    if (selectedExerciseId) {
+      exerciseConfig = trackedWorkout.workout.exercises.find(
+        (ex) => ex.exerciseId === selectedExerciseId
+      );
+    }
+
+    if (!exerciseConfig) {
+      throw new Error('Exercise configuration not found');
+    }
+
+    if (!exerciseConfig) {
+      throw new Error('Exercise configuration not found');
+    }
+
+    // Create empty sets based on the workout configuration
+    const emptySets = Array(exerciseConfig.sets)
+      .fill(null)
+      .map(() => ({
+        weight: 0,
+        reps: 0,
+        isCompleted: false,
+      }));
+
+    const result: Id<'trackedWorkoutExercises'> = await ctx.runMutation(
+      api.trackedWorkoutExercises.create,
+      {
+        trackedWorkoutId,
+        exerciseId: exerciseConfig.exerciseId,
+        sets: emptySets,
+      }
+    );
+
+    return result;
   },
 });
 

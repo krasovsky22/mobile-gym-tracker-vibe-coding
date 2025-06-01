@@ -21,12 +21,12 @@ export default function TrackWorkoutScreen() {
   const router = useRouter();
   const workouts = useQuery(api.workouts.list);
 
-  const saveTrackedWorkout = useMutation(api.trackedWorkouts.create);
+  const createTrackedWorkout = useMutation(api.trackedWorkouts.create);
 
   const handleSelectWorkout = async (workout: Workout) => {
     // create workout row
     try {
-      const trackedWorkoutId = await saveTrackedWorkout({
+      const trackedWorkoutId = await createTrackedWorkout({
         workoutId: workout._id,
       });
 

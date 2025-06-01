@@ -11,7 +11,7 @@ import { ThemedButton, ThemedText, ThemedTextInput, ThemedView, ThemedCheckbox }
 
 export default function TrackExerciseScreen() {
   const router = useRouter();
-  const { error } = useAlert();
+  const { error, confirm } = useAlert();
   const { exerciseId } = useLocalSearchParams<{
     id: string;
     exerciseId: string;
@@ -23,6 +23,7 @@ export default function TrackExerciseScreen() {
 
   const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
   const createSet = useMutation(api.trackedWorkoutExerciseSets.create);
+  const createTrackedExercise = useMutation(api.trackedWorkoutExercises.create);
 
   // Local state for sets
   const [localSets, setLocalSets] = useState<Doc<'trackedWorkoutExerciseSets'>[]>([]);
@@ -39,30 +40,35 @@ export default function TrackExerciseScreen() {
     }
   }, [trackedWorkoutExercise?.sets]);
 
+  const peristPendingSaves = async () => {
+    if (pendingSaves.size === 0) return;
+
+    const setsToSave = Array.from(pendingSaves);
+
+    for (const setId of setsToSave) {
+      const set = localSets.find((s) => s._id === setId);
+      if (set) {
+        try {
+          await updateSet({
+            id: setId,
+            weight: set.weight,
+            reps: set.reps,
+            isCompleted: set.isCompleted,
+          });
+        } catch (err) {
+          console.error('Error auto-saving set:', err);
+          // Don't show error for auto-save failures to avoid disrupting the user
+        }
+      }
+    }
+  };
+
   // Auto-save pending changes after 2 seconds of inactivity
   useEffect(() => {
     if (pendingSaves.size === 0) return;
 
     const timeoutId = setTimeout(async () => {
-      const setsToSave = Array.from(pendingSaves);
-
-      for (const setId of setsToSave) {
-        const set = localSets.find((s) => s._id === setId);
-        if (set) {
-          try {
-            await updateSet({
-              id: setId,
-              weight: set.weight,
-              reps: set.reps,
-              isCompleted: set.isCompleted,
-            });
-          } catch (err) {
-            console.error('Error auto-saving set:', err);
-            // Don't show error for auto-save failures to avoid disrupting the user
-          }
-        }
-      }
-
+      peristPendingSaves();
       setPendingSaves(new Set());
     }, 2000);
 
@@ -160,6 +166,18 @@ export default function TrackExerciseScreen() {
     }
   };
 
+  const moveToNextExercise = async () => {
+    await peristPendingSaves();
+  };
+
+  const handleNextExerciseClick = async () => {
+    confirm(
+      'Are you sure you want to move to the next exercise?',
+      'Not all sets are completed.',
+      moveToNextExercise
+    );
+  };
+
   return (
     <SafeAreaProvider>
       <ThemedView className="flex-1">
@@ -198,10 +216,11 @@ export default function TrackExerciseScreen() {
                     key={set._id}>
                     <ThemedText className="mt-4 text-lg font-semibold">{set.setNumber}.</ThemedText>
 
-                    <ThemedView className="mb-2 flex-1 flex-row space-x-4">
+                    <ThemedView className="mb-2 flex-1 flex-row gap-3 space-x-4">
                       <ThemedView className="flex-1">
                         <ThemedText className="mb-2 text-neutral-600">Weight (kg)</ThemedText>
                         <ThemedTextInput
+                          className=""
                           value={set.weight.toString()}
                           onChangeText={(value) => handleUpdateSet(set._id, 'weight', value)}
                           keyboardType="numeric"
@@ -234,7 +253,7 @@ export default function TrackExerciseScreen() {
                   Add Set
                 </ThemedButton>
               </ThemedView>
-              <ThemedButton variant="primary" onPress={() => {}}>
+              <ThemedButton variant="primary" onPress={handleNextExerciseClick}>
                 Next Exercise
               </ThemedButton>
             </ThemedView>
