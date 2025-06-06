@@ -115,7 +115,7 @@ export default function TrackWorkoutDetailsScreen() {
                             ? handleContinueExercise(trackedExercise._id)
                             : handleStartExercise(exercise._id)
                         }>
-                        {isStarted ? 'In Progress' : 'Start'}
+                        {isStarted ? 'Continue' : 'Start'}
                       </ThemedButton>
                     </ThemedView>
                     {isStarted && (
