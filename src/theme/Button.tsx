@@ -19,7 +19,7 @@ const variantStyles = {
     text: 'text-white',
   },
   secondary: {
-    container: 'bg-secondary-100 dark:bg-secondary-800',
+    container: 'bg-secondary-500 dark:bg-secondary-800',
     text: 'text-secondary-700 dark:text-secondary-300',
   },
   danger: {

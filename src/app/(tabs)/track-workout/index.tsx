@@ -4,6 +4,7 @@ import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 
+import { ContinueWorkoutBanner } from '~/components';
 import { ThemedButton, ThemedText, ThemedView } from '~/theme';
 
 type WorkoutExercise = {
@@ -47,8 +48,11 @@ export default function TrackWorkoutScreen() {
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
         <ScrollView className="flex-1 p-6">
-          <ThemedText className="mb-6 text-center text-3xl font-bold text-neutral-900">
-            Select Workout
+          {/* Continue Current Workout Banner */}
+          <ContinueWorkoutBanner />
+
+          <ThemedText className="mb-6 text-2xl font-bold text-center text-neutral-900">
+            Start Workout
           </ThemedText>
 
           {workouts?.map((workout: Workout) => (
@@ -56,7 +60,7 @@ export default function TrackWorkoutScreen() {
               key={workout._id}
               onPress={() => handleSelectWorkout(workout)}
               className="mb-4">
-              <ThemedView className="rounded-lg border border-gray-200 p-4">
+              <ThemedView className="p-4 border border-gray-200 rounded-lg">
                 <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
                 <ThemedText className="text-gray-600">
                   {workout.exercises.length} exercises

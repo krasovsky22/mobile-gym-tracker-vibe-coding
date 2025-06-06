@@ -51,3 +51,20 @@ export const update = mutation({
     return await ctx.db.patch(id, data);
   },
 });
+
+export const remove = mutation({
+  args: {
+    id: v.id('trackedWorkoutExerciseSets'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getUserId(ctx)!;
+
+    // Verify ownership
+    const existingSet = await ctx.db.get(args.id);
+    if (!existingSet || existingSet.userId !== userId) {
+      throw new Error('Set not found or unauthorized');
+    }
+
+    return await ctx.db.delete(args.id);
+  },
+});

@@ -24,7 +24,15 @@ export default function TrackWorkoutDetailsScreen() {
     id: id as Id<'trackedWorkouts'>,
   });
 
-  console.log('Tracked workout data:', trackedWorkoutData);
+  const handleContinueExercise = async (exerciseId: Id<'trackedWorkoutExercises'>) => {
+    router.push({
+      pathname: '/track-workout/[id]/exercise/[exerciseId]',
+      params: {
+        id,
+        exerciseId,
+      },
+    });
+  };
 
   const handleStartExercise = async (exerciseId: Id<'exercises'>) => {
     if (!trackedWorkoutData) return;
@@ -79,9 +87,11 @@ export default function TrackWorkoutDetailsScreen() {
           <ScrollView className="flex-1">
             <ThemedView className="p-4">
               {trackedWorkoutData.workout.exercises.map((workoutExercise) => {
-                const isStarted = trackedWorkoutData.trackedExercises?.some(
+                const trackedExercise = trackedWorkoutData.trackedExercises?.find(
                   (te) => te.exerciseId === workoutExercise.exerciseId
                 );
+
+                const isStarted = !!trackedExercise;
 
                 const exercise = workoutExercise.exercise;
                 if (!exercise) return null;
@@ -100,7 +110,11 @@ export default function TrackWorkoutDetailsScreen() {
                       </ThemedView>
                       <ThemedButton
                         variant={isStarted ? 'secondary' : 'primary'}
-                        onPress={() => handleStartExercise(exercise._id)}>
+                        onPress={() =>
+                          isStarted
+                            ? handleContinueExercise(trackedExercise._id)
+                            : handleStartExercise(exercise._id)
+                        }>
                         {isStarted ? 'In Progress' : 'Start'}
                       </ThemedButton>
                     </ThemedView>

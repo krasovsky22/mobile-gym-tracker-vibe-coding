@@ -4,10 +4,123 @@ import { useMutation, useQuery } from 'convex/react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useAlert } from '~/context/alert';
 import { ThemedButton, ThemedText, ThemedTextInput, ThemedView, ThemedCheckbox } from '~/theme';
+
+// Swipeable Set Row Component
+function SwipeableSetRow({
+  set,
+  onUpdateSet,
+  onToggleComplete,
+  onRemove,
+}: {
+  set: Doc<'trackedWorkoutExerciseSets'>;
+  onUpdateSet: (
+    setId: Id<'trackedWorkoutExerciseSets'>,
+    field: 'weight' | 'reps',
+    value: string
+  ) => void;
+  onToggleComplete: (setId: Id<'trackedWorkoutExerciseSets'>) => void;
+  onRemove: (setId: Id<'trackedWorkoutExerciseSets'>) => void;
+}) {
+  const translateX = useSharedValue(0);
+  const [showDelete, setShowDelete] = useState(false);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateX.value }],
+    };
+  });
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      // Only allow left swipe (negative translation)
+      if (event.translationX < 0) {
+        translateX.value = Math.max(event.translationX, -80);
+      }
+    })
+    .onEnd((event) => {
+      if (event.translationX < -40) {
+        // Show delete button
+        translateX.value = withTiming(-80, { duration: 200 });
+        runOnJS(setShowDelete)(true);
+      } else {
+        // Snap back
+        translateX.value = withTiming(0, { duration: 200 });
+        runOnJS(setShowDelete)(false);
+      }
+    });
+
+  const handleDelete = () => {
+    onRemove(set._id);
+    // Reset position
+    translateX.value = 0;
+    setShowDelete(false);
+  };
+
+  return (
+    <ThemedView className="relative mb-2">
+      {/* Delete button background */}
+      {showDelete && (
+        <ThemedView className="absolute top-0 bottom-0 right-0 flex items-center justify-center w-20 bg-red-500 rounded-r-lg">
+          <ThemedButton
+            variant="danger"
+            size="sm"
+            onPress={handleDelete}
+            className="bg-transparent">
+            <ThemedText className="text-xs text-white">Delete</ThemedText>
+          </ThemedButton>
+        </ThemedView>
+      )}
+
+      {/* Main content */}
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={animatedStyle} className="rounded-lg ">
+          <ThemedView className="flex-row items-center justify-between gap-3 p-2 rounded-lg">
+            <ThemedText className="mt-4 text-lg font-semibold">{set.setNumber}.</ThemedText>
+
+            <ThemedView className="flex-row flex-1 gap-3 mb-2 space-x-4">
+              <ThemedView className="flex-1">
+                <ThemedText className="mb-2 text-neutral-600">Weight (kg)</ThemedText>
+                <ThemedTextInput
+                  className=""
+                  value={set.weight.toString()}
+                  onChangeText={(value) => onUpdateSet(set._id, 'weight', value)}
+                  keyboardType="numeric"
+                  placeholder="Enter weight"
+                />
+              </ThemedView>
+              <ThemedView className="flex-1">
+                <ThemedText className="mb-2 text-neutral-600">Reps</ThemedText>
+                <ThemedTextInput
+                  value={set.reps.toString()}
+                  onChangeText={(value) => onUpdateSet(set._id, 'reps', value)}
+                  keyboardType="numeric"
+                  placeholder="Enter reps"
+                />
+              </ThemedView>
+            </ThemedView>
+
+            <ThemedCheckbox
+              checked={set.isCompleted}
+              onPress={() => onToggleComplete(set._id)}
+              className="mt-4"
+            />
+          </ThemedView>
+        </Animated.View>
+      </GestureDetector>
+    </ThemedView>
+  );
+}
 
 export default function TrackExerciseScreen() {
   const router = useRouter();
@@ -23,7 +136,7 @@ export default function TrackExerciseScreen() {
 
   const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
   const createSet = useMutation(api.trackedWorkoutExerciseSets.create);
-  const createTrackedExercise = useMutation(api.trackedWorkoutExercises.create);
+  const deleteSet = useMutation(api.trackedWorkoutExerciseSets.remove);
 
   // Local state for sets
   const [localSets, setLocalSets] = useState<Doc<'trackedWorkoutExerciseSets'>[]>([]);
@@ -35,7 +148,6 @@ export default function TrackExerciseScreen() {
   // Initialize local sets when data is loaded
   useEffect(() => {
     if (trackedWorkoutExercise?.sets) {
-      console.log('loaded sets:', trackedWorkoutExercise.sets);
       setLocalSets(trackedWorkoutExercise.sets);
     }
   }, [trackedWorkoutExercise?.sets]);
@@ -77,7 +189,7 @@ export default function TrackExerciseScreen() {
 
   if (!trackedWorkoutExercise) {
     return (
-      <ThemedView className="flex-1 items-center justify-center">
+      <ThemedView className="items-center justify-center flex-1">
         <ThemedText>Loading exercise...</ThemedText>
       </ThemedView>
     );
@@ -138,6 +250,31 @@ export default function TrackExerciseScreen() {
     }
   };
 
+  const handleRemoveSet = async (setId: Id<'trackedWorkoutExerciseSets'>) => {
+    // Remove from local state first for immediate UI feedback
+    setLocalSets((prevSets) => prevSets.filter((set) => set._id !== setId));
+
+    try {
+      await deleteSet({ id: setId });
+
+      // Re-number the remaining sets in local state
+      setLocalSets((prevSets) =>
+        prevSets.map((set, index) => ({
+          ...set,
+          setNumber: index + 1,
+        }))
+      );
+    } catch (err) {
+      console.error('Error removing set:', err);
+      error('Failed to remove set');
+
+      // Revert local state on error by reloading from server
+      if (trackedWorkoutExercise?.sets) {
+        setLocalSets(trackedWorkoutExercise.sets);
+      }
+    }
+  };
+
   const handleToggleSetComplete = async (setId: Id<'trackedWorkoutExerciseSets'>) => {
     const set = localSets.find((s) => s._id === setId);
     if (!set) return;
@@ -179,87 +316,63 @@ export default function TrackExerciseScreen() {
   };
 
   return (
-    <SafeAreaProvider>
-      <ThemedView className="flex-1">
-        <SafeAreaView className="flex-1">
-          <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
-            <ThemedButton
-              variant="secondary"
-              size="md"
-              className="mr-4"
-              onPress={() => router.back()}>
-              Back
-            </ThemedButton>
-            <ThemedText className="text-xl font-semibold">
-              {trackedWorkoutExercise.exercise.name}
-            </ThemedText>
-          </ThemedView>
-
-          <ScrollView className="flex-1" contentContainerStyle={{ flex: 1 }}>
-            <ThemedView className="p-4">
-              <ThemedText className="text-lg font-semibold">Exercise Details</ThemedText>
-              <ThemedText className="text-neutral-600">
-                Muscle Group: {trackedWorkoutExercise.exercise.muscleGroup}
-              </ThemedText>
-              <ThemedText className="text-neutral-600">
-                Category: {trackedWorkoutExercise.exercise.category}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ThemedView className="flex-1">
+          <SafeAreaView className="flex-1">
+            <ThemedView className="flex-row items-center p-4 border-b border-neutral-200">
+              <ThemedButton
+                variant="secondary"
+                size="md"
+                className="mr-4"
+                onPress={() => router.back()}>
+                Back
+              </ThemedButton>
+              <ThemedText className="text-xl font-semibold">
+                {trackedWorkoutExercise.exercise.name}
               </ThemedText>
             </ThemedView>
 
-            <ThemedView className="flex-1 p-4">
-              <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
+            <ScrollView className="flex-1" contentContainerStyle={{ flex: 1 }}>
+              <ThemedView className="p-4">
+                <ThemedText className="text-lg font-semibold">Exercise Details</ThemedText>
+                <ThemedText className="text-neutral-600">
+                  Muscle Group: {trackedWorkoutExercise.exercise.muscleGroup}
+                </ThemedText>
+                <ThemedText className="text-neutral-600">
+                  Category: {trackedWorkoutExercise.exercise.category}
+                </ThemedText>
+              </ThemedView>
 
-              <ThemedView className="mb-2 flex-1 rounded-lg border border-neutral-200 p-4">
-                {localSets.map((set) => (
-                  <ThemedView
-                    className="mb-2 flex-row items-center justify-between gap-3"
-                    key={set._id}>
-                    <ThemedText className="mt-4 text-lg font-semibold">{set.setNumber}.</ThemedText>
+              <ThemedView className="flex-1 p-4">
+                <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-                    <ThemedView className="mb-2 flex-1 flex-row gap-3 space-x-4">
-                      <ThemedView className="flex-1">
-                        <ThemedText className="mb-2 text-neutral-600">Weight (kg)</ThemedText>
-                        <ThemedTextInput
-                          className=""
-                          value={set.weight.toString()}
-                          onChangeText={(value) => handleUpdateSet(set._id, 'weight', value)}
-                          keyboardType="numeric"
-                          placeholder="Enter weight"
-                        />
-                      </ThemedView>
-                      <ThemedView className="flex-1">
-                        <ThemedText className="mb-2 text-neutral-600">Reps</ThemedText>
-                        <ThemedTextInput
-                          value={set.reps.toString()}
-                          onChangeText={(value) => handleUpdateSet(set._id, 'reps', value)}
-                          keyboardType="numeric"
-                          placeholder="Enter reps"
-                        />
-                      </ThemedView>
-                    </ThemedView>
-
-                    <ThemedCheckbox
-                      checked={set.isCompleted}
-                      onPress={() => handleToggleSetComplete(set._id)}
-                      className="mt-4"
+                <ThemedView className="flex-1 p-4 mb-2 border rounded-lg border-neutral-200">
+                  {localSets.map((set) => (
+                    <SwipeableSetRow
+                      key={set._id}
+                      set={set}
+                      onUpdateSet={handleUpdateSet}
+                      onToggleComplete={handleToggleSetComplete}
+                      onRemove={handleRemoveSet}
                     />
-                  </ThemedView>
-                ))}
-                <ThemedButton
-                  className="ml-auto w-[120px]"
-                  variant="secondary"
-                  icon="add"
-                  onPress={() => handleAddSet()}>
-                  Add Set
+                  ))}
+                  <ThemedButton
+                    className="ml-auto w-[120px]"
+                    variant="secondary"
+                    icon="add"
+                    onPress={() => handleAddSet()}>
+                    Add Set
+                  </ThemedButton>
+                </ThemedView>
+                <ThemedButton variant="primary" onPress={handleNextExerciseClick}>
+                  Next Exercise
                 </ThemedButton>
               </ThemedView>
-              <ThemedButton variant="primary" onPress={handleNextExerciseClick}>
-                Next Exercise
-              </ThemedButton>
-            </ThemedView>
-          </ScrollView>
-        </SafeAreaView>
-      </ThemedView>
-    </SafeAreaProvider>
+            </ScrollView>
+          </SafeAreaView>
+        </ThemedView>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

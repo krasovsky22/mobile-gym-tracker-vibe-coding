@@ -143,3 +143,57 @@ export const get = query({
     };
   },
 });
+
+export const getCurrentInProgress = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getUserId(ctx);
+
+    // Find the most recent in-progress or started workout
+    const inProgressWorkout = await ctx.db
+      .query('trackedWorkouts')
+      .filter((q) => q.eq(q.field('userId'), userId))
+      .filter((q) =>
+        q.or(q.eq(q.field('status'), 'started'), q.eq(q.field('status'), 'in_progress'))
+      )
+      .order('desc')
+      .first();
+
+    if (!inProgressWorkout) {
+      return null;
+    }
+
+    // Get the original workout details
+    const workout = await ctx.db.get(inProgressWorkout.workoutId);
+    if (!workout) {
+      return null;
+    }
+
+    // Get tracked exercises to calculate progress
+    const trackedExercises = await ctx.db
+      .query('trackedWorkoutExercises')
+      .filter((q) => q.eq(q.field('trackedWorkoutId'), inProgressWorkout._id))
+      .collect();
+
+    // Calculate completion percentage
+    const totalExercises = workout.exercises.length;
+    const completedExercises = trackedExercises.filter((ex) => ex.status === 'completed').length;
+    const completionPercentage =
+      totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
+
+    // Find the current active exercise (last started but not completed)
+    const currentExercise = trackedExercises
+      .filter((ex) => ex.status !== 'completed')
+      .sort((a, b) => b.createdAt - a.createdAt)[0];
+
+    return {
+      ...inProgressWorkout,
+      workout,
+      totalExercises,
+      completedExercises,
+      completionPercentage,
+      currentExercise,
+      startTime: inProgressWorkout.createdAt,
+    };
+  },
+});
