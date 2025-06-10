@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "my-expo-app",
-    "slug": "my-expo-app",
+    "slug": "mobile-gym-tracker",
     "scheme": "your-app-scheme",
     "version": "1.0.0",
     "web": {
@@ -33,6 +33,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "99b0787d-cef5-433d-bcc3-db3e239bf6a0"
+      }
+    },
+    "owner": "krasovsky"
   }
 }
