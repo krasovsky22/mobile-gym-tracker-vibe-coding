@@ -1,0 +1,34 @@
+{
+    "build": {
+      "base": {
+        "node": "22.15.0",
+        "yarn": "1.22.22",
+        "env": {
+          "EXPO_PUBLIC_CONVEX_URL": ""
+        },
+        "ios": {
+          "image": "latest",
+          "env": {
+            "PLATFORM": "ios"
+          }
+        }
+      },
+      "development": {
+        "extends": "base",
+        "developmentClient": true,
+        "env": {
+          "ENVIRONMENT": "development"
+        },
+        "ios": {
+          "simulator": true
+        }
+      },
+      "production": {
+        "extends": "base",
+        "env": {
+          "ENVIRONMENT": "production"
+        }
+      }
+    }
+  }
+  
