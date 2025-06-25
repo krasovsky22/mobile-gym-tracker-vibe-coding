@@ -23,10 +23,17 @@ export default function TrackExerciseScreen() {
     id: exerciseId as Id<'trackedWorkoutExercises'>,
   });
 
+  // Fetch the tracked workout to get workout details
+  const trackedWorkout = useQuery(
+    api.trackedWorkouts.get,
+    trackedWorkoutExercise ? { id: trackedWorkoutExercise.trackedWorkoutId } : 'skip'
+  );
+
   const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
   const createSet = useMutation(api.trackedWorkoutExerciseSets.create);
   const deleteSet = useMutation(api.trackedWorkoutExerciseSets.remove);
   const updateExerciseStatus = useMutation(api.trackedWorkoutExercises.updateStatus);
+  const moveToNextExercise = useMutation(api.trackedWorkoutExercises.moveToNextExercise);
 
   // Local state for sets
   const [localSets, setLocalSets] = useState<Doc<'trackedWorkoutExerciseSets'>[]>([]);
@@ -207,16 +214,81 @@ export default function TrackExerciseScreen() {
     }
   };
 
-  const moveToNextExercise = async () => {
+  const moveToNextExerciseHandler = async () => {
     await peristPendingSaves();
+
+    if (!trackedWorkoutExercise) return;
+
+    const nextTrackedExerciseId = await moveToNextExercise({
+      trackedWorkoutId: trackedWorkoutExercise.trackedWorkoutId,
+      currentExerciseId: trackedWorkoutExercise._id,
+    });
+
+    // its the last exercise, so we don't have a next one
+    if (!nextTrackedExerciseId) {
+      // navigate to track workout page
+      router.push({
+        pathname: '/track-workout/[id]/track',
+        params: {
+          id: trackedWorkoutExercise.trackedWorkoutId,
+        },
+      });
+
+      return;
+    }
+
+    // Navigate back to track workout page to let it handle the next exercise logic
+    router.push({
+      pathname: '/track-workout/[id]/exercise/[exerciseId]',
+      params: { id: trackedWorkoutExercise.trackedWorkoutId, exerciseId: nextTrackedExerciseId },
+    });
+  };
+
+  // Helper function to check if this is the last exercise in the workout
+  const isLastExerciseInWorkout = () => {
+    if (!trackedWorkout?.workout?.exercises || !trackedWorkoutExercise) return false;
+
+    const workoutExercises = trackedWorkout.workout.exercises;
+    const currentExerciseIndex = workoutExercises.findIndex(
+      (ex: any) => ex.exerciseId === trackedWorkoutExercise.exerciseId
+    );
+
+    return currentExerciseIndex === workoutExercises.length - 1;
+  };
+
+  // Helper function to get the appropriate button text
+  const getNextButtonText = () => {
+    const isLastExercise = isLastExerciseInWorkout();
+    const isCompleted = trackedWorkoutExercise?.status === 'completed';
+    const allSetsCompleted = localSets.every((s) => s.isCompleted);
+
+    if (isLastExercise) {
+      if (isCompleted) {
+        return 'Complete Workout';
+      }
+      return allSetsCompleted ? 'Complete Workout' : 'Complete Workout (Sets Incomplete)';
+    }
+
+    if (isCompleted) {
+      return 'Continue to Next Exercise';
+    }
+    return allSetsCompleted ? 'Next Exercise' : 'Next Exercise (Sets Incomplete)';
   };
 
   const handleNextExerciseClick = async () => {
-    confirm(
-      'Are you sure you want to move to the next exercise?',
-      'Not all sets are completed.',
-      moveToNextExercise
-    );
+    const allSetsCompleted = localSets.every((s) => s.isCompleted);
+    const isLastExercise = isLastExerciseInWorkout();
+
+    if (!allSetsCompleted) {
+      const message = isLastExercise ? 'Complete workout?' : 'Move to next exercise?';
+      const description = isLastExercise
+        ? 'Not all sets are completed. You can always come back to finish this exercise later.'
+        : 'Not all sets are completed. You can always come back to finish this exercise.';
+
+      confirm(message, description, moveToNextExerciseHandler);
+    } else {
+      await moveToNextExerciseHandler();
+    }
   };
 
   return (
@@ -272,7 +344,7 @@ export default function TrackExerciseScreen() {
                 <ThemedButton
                   variant={trackedWorkoutExercise.status === 'completed' ? 'success' : 'primary'}
                   onPress={handleNextExerciseClick}>
-                  Next Exercise
+                  {getNextButtonText()}
                 </ThemedButton>
               </ThemedView>
             </ScrollView>

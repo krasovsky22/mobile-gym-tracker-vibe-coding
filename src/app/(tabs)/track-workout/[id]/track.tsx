@@ -83,7 +83,7 @@ export default function TrackWorkoutDetailsScreen() {
 
           <ScrollView className="flex-1">
             <ThemedView className="p-4">
-              {trackedWorkoutData.workout.exercises.map((workoutExercise) => {
+              {trackedWorkoutData.workout.exercises.map((workoutExercise, index) => {
                 const trackedExercise = trackedWorkoutData.trackedExercises?.find(
                   (te) => te.exerciseId === workoutExercise.exerciseId
                 );

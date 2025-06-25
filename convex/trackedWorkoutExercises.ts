@@ -116,14 +116,19 @@ type TrackedWorkoutType = Doc<'trackedWorkouts'> & {
   workout: Doc<'workouts'>;
 };
 
+type ExerciseConfig = {
+  exerciseId: Id<'exercises'>;
+  sets: number;
+};
+
 export const moveToNextExercise = mutation({
   args: {
     trackedWorkoutId: v.id('trackedWorkouts'),
     selectedExerciseId: v.optional(v.id('exercises')),
     currentExerciseId: v.optional(v.id('trackedWorkoutExercises')),
   },
-  handler: async (ctx, args) => {
-    const { trackedWorkoutId, currentExerciseId, selectedExerciseId } = args;
+  handler: async (ctx, args): Promise<Id<'trackedWorkoutExercises'> | null> => {
+    const { trackedWorkoutId, selectedExerciseId, currentExerciseId } = args;
 
     const trackedWorkout: TrackedWorkoutType | null = await ctx.runQuery(api.trackedWorkouts.get, {
       id: trackedWorkoutId,
@@ -132,43 +137,79 @@ export const moveToNextExercise = mutation({
       throw new Error('Unable to find tracked workout');
     }
 
-    let exerciseConfig;
-
+    // If a specific exercise is selected, use that
     if (selectedExerciseId) {
-      exerciseConfig = trackedWorkout.workout.exercises.find(
-        (ex) => ex.exerciseId === selectedExerciseId
+      const exerciseConfig: ExerciseConfig | undefined = trackedWorkout.workout.exercises.find(
+        (ex: ExerciseConfig) => ex.exerciseId === selectedExerciseId
       );
-    }
-
-    if (!exerciseConfig) {
-      throw new Error('Exercise configuration not found');
-    }
-
-    if (!exerciseConfig) {
-      throw new Error('Exercise configuration not found');
-    }
-
-    // Create empty sets based on the workout configuration
-    const emptySets = Array(exerciseConfig.sets)
-      .fill(null)
-      .map(() => ({
-        weight: 0,
-        reps: 0,
-        isCompleted: false,
-      }));
-
-    const result: Id<'trackedWorkoutExercises'> = await ctx.runMutation(
-      api.trackedWorkoutExercises.create,
-      {
-        trackedWorkoutId,
-        exerciseId: exerciseConfig.exerciseId,
-        sets: emptySets,
+      if (!exerciseConfig) {
+        throw new Error('Selected exercise not found in workout');
       }
-    );
+      return await createTrackedExercise(ctx, trackedWorkoutId, exerciseConfig);
+    }
 
-    return result;
+    // If currentExerciseId is provided, find the next exercise in sequence
+    if (currentExerciseId) {
+      const currentTrackedExercise = await ctx.db.get(currentExerciseId);
+      if (!currentTrackedExercise) {
+        throw new Error('Current exercise not found');
+      }
+
+      // Find the current exercise's position in the workout
+      const currentExerciseIndex = trackedWorkout.workout.exercises.findIndex(
+        (ex: ExerciseConfig) => ex.exerciseId === currentTrackedExercise.exerciseId
+      );
+
+      if (currentExerciseIndex === -1) {
+        throw new Error('Current exercise not found in workout');
+      }
+
+      // Get the next exercise in the sequence
+      const nextExerciseIndex = currentExerciseIndex + 1;
+      if (nextExerciseIndex >= trackedWorkout.workout.exercises.length) {
+        return null;
+      }
+
+      const exerciseConfig: ExerciseConfig = trackedWorkout.workout.exercises[nextExerciseIndex];
+      return await createTrackedExercise(ctx, trackedWorkoutId, exerciseConfig);
+    }
+
+    // Default case: get the first exercise in the workout
+    const firstExerciseConfig: ExerciseConfig | undefined = trackedWorkout.workout.exercises[0];
+    if (!firstExerciseConfig) {
+      throw new Error('No exercises found in workout');
+    }
+
+    return await createTrackedExercise(ctx, trackedWorkoutId, firstExerciseConfig);
   },
 });
+
+// Helper function to create a tracked exercise with empty sets
+async function createTrackedExercise(
+  ctx: any,
+  trackedWorkoutId: Id<'trackedWorkouts'>,
+  exerciseConfig: ExerciseConfig
+): Promise<Id<'trackedWorkoutExercises'>> {
+  // Create empty sets based on the workout configuration
+  const emptySets = Array(exerciseConfig.sets)
+    .fill(null)
+    .map(() => ({
+      weight: 0,
+      reps: 0,
+      isCompleted: false,
+    }));
+
+  const result: Id<'trackedWorkoutExercises'> = await ctx.runMutation(
+    api.trackedWorkoutExercises.create,
+    {
+      trackedWorkoutId,
+      exerciseId: exerciseConfig.exerciseId,
+      sets: emptySets,
+    }
+  );
+
+  return result;
+}
 
 export const getWithSetsByTrackedWorkout = async (
   ctx: QueryCtx,
