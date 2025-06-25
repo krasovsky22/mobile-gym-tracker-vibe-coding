@@ -82,6 +82,36 @@ export const create = mutation({
   },
 });
 
+// mark tracked workout exercise as completed
+export const updateStatus = mutation({
+  args: {
+    id: v.id('trackedWorkoutExercises'),
+    status: v.union(v.literal('started'), v.literal('in_progress'), v.literal('completed')),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getUserId(ctx);
+
+    const trackedWorkoutExercise = await ctx.db.get(args.id);
+    if (!trackedWorkoutExercise || trackedWorkoutExercise.userId !== userId) {
+      throw new Error('Tracked workout exercise not found or unauthorized');
+    }
+
+    const updateData: any = {
+      status: args.status,
+      updatedAt: Date.now(),
+    };
+
+    // If marking as completed, set the completion timestamp
+    if (args.status === 'completed') {
+      updateData.completedAt = Date.now();
+    }
+
+    await ctx.db.patch(args.id, updateData);
+
+    return args.id;
+  },
+});
+
 type TrackedWorkoutType = Doc<'trackedWorkouts'> & {
   workout: Doc<'workouts'>;
 };

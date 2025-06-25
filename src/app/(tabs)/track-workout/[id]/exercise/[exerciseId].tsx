@@ -71,7 +71,7 @@ function SwipeableSetRow({
     <ThemedView className="relative mb-2">
       {/* Delete button background */}
       {showDelete && (
-        <ThemedView className="absolute top-0 bottom-0 right-0 flex items-center justify-center w-20 bg-red-500 rounded-r-lg">
+        <ThemedView className="absolute bottom-0 right-0 top-0 flex w-20 items-center justify-center rounded-r-lg bg-red-500">
           <ThemedButton
             variant="danger"
             size="sm"
@@ -85,10 +85,10 @@ function SwipeableSetRow({
       {/* Main content */}
       <GestureDetector gesture={panGesture}>
         <Animated.View style={animatedStyle} className="rounded-lg ">
-          <ThemedView className="flex-row items-center justify-between gap-3 p-2 rounded-lg">
+          <ThemedView className="flex-row items-center justify-between gap-3 rounded-lg p-2">
             <ThemedText className="mt-4 text-lg font-semibold">{set.setNumber}.</ThemedText>
 
-            <ThemedView className="flex-row flex-1 gap-3 mb-2 space-x-4">
+            <ThemedView className="mb-2 flex-1 flex-row gap-3 space-x-4">
               <ThemedView className="flex-1">
                 <ThemedText className="mb-2 text-neutral-600">Weight (kg)</ThemedText>
                 <ThemedTextInput
@@ -137,6 +137,7 @@ export default function TrackExerciseScreen() {
   const updateSet = useMutation(api.trackedWorkoutExerciseSets.update);
   const createSet = useMutation(api.trackedWorkoutExerciseSets.create);
   const deleteSet = useMutation(api.trackedWorkoutExerciseSets.remove);
+  const updateExerciseStatus = useMutation(api.trackedWorkoutExercises.updateStatus);
 
   // Local state for sets
   const [localSets, setLocalSets] = useState<Doc<'trackedWorkoutExerciseSets'>[]>([]);
@@ -189,7 +190,7 @@ export default function TrackExerciseScreen() {
 
   if (!trackedWorkoutExercise) {
     return (
-      <ThemedView className="items-center justify-center flex-1">
+      <ThemedView className="flex-1 items-center justify-center">
         <ThemedText>Loading exercise...</ThemedText>
       </ThemedView>
     );
@@ -301,6 +302,20 @@ export default function TrackExerciseScreen() {
         prevSets.map((s) => (s._id === setId ? { ...s, isCompleted: set.isCompleted } : s))
       );
     }
+
+    // if all sets are completed, mark exercise as completed
+    const allSetsCompleted = localSets.every((s) => s.isCompleted);
+    if (allSetsCompleted) {
+      try {
+        await updateExerciseStatus({
+          id: trackedWorkoutExercise._id,
+          status: 'completed',
+        });
+      } catch (err) {
+        console.error('Error marking exercise as completed:', err);
+        error('Failed to mark exercise as completed');
+      }
+    }
   };
 
   const moveToNextExercise = async () => {
@@ -320,7 +335,7 @@ export default function TrackExerciseScreen() {
       <SafeAreaProvider>
         <ThemedView className="flex-1">
           <SafeAreaView className="flex-1">
-            <ThemedView className="flex-row items-center p-4 border-b border-neutral-200">
+            <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
               <ThemedButton
                 variant="secondary"
                 size="md"
@@ -347,7 +362,7 @@ export default function TrackExerciseScreen() {
               <ThemedView className="flex-1 p-4">
                 <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-                <ThemedView className="flex-1 p-4 mb-2 border rounded-lg border-neutral-200">
+                <ThemedView className="mb-2 flex-1 rounded-lg border border-neutral-200 p-4">
                   {localSets.map((set) => (
                     <SwipeableSetRow
                       key={set._id}
@@ -365,7 +380,9 @@ export default function TrackExerciseScreen() {
                     Add Set
                   </ThemedButton>
                 </ThemedView>
-                <ThemedButton variant="primary" onPress={handleNextExerciseClick}>
+                <ThemedButton
+                  variant={trackedWorkoutExercise.status === 'completed' ? 'success' : 'primary'}
+                  onPress={handleNextExerciseClick}>
                   Next Exercise
                 </ThemedButton>
               </ThemedView>
