@@ -1,0 +1,135 @@
+{"name": "Barbell Bench Press", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Dumbbell Bench Press", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Incline Barbell Bench Press", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Incline Dumbbell Press", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Decline Barbell Bench Press", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Decline Dumbbell Press", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Dumbbell Flyes", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Incline Dumbbell Flyes", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Cable Crossover", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Chest Dips", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Push-ups", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Diamond Push-ups", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Wide Grip Push-ups", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Pec Deck Machine", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Chest Press Machine", "category": "Strength", "muscleGroup": "Chest"}
+{"name": "Deadlift", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Romanian Deadlift", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Sumo Deadlift", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Pull-ups", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Chin-ups", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Wide Grip Pull-ups", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Lat Pulldown", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Wide Grip Lat Pulldown", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Close Grip Lat Pulldown", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Barbell Rows", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Bent Over Barbell Row", "category": "Strength", "muscleGroup": "Back"}
+{"name": "T-Bar Row", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Dumbbell Rows", "category": "Strength", "muscleGroup": "Back"}
+{"name": "One Arm Dumbbell Row", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Seated Cable Row", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Cable Row", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Face Pulls", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Reverse Flyes", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Shrugs", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Dumbbell Shrugs", "category": "Strength", "muscleGroup": "Back"}
+{"name": "Military Press", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Overhead Press", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Dumbbell Shoulder Press", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Seated Dumbbell Press", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Arnold Press", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Lateral Raises", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Dumbbell Lateral Raises", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Cable Lateral Raises", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Front Raises", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Dumbbell Front Raises", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Rear Delt Flyes", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Bent Over Lateral Raises", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Upright Rows", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Pike Push-ups", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Handstand Push-ups", "category": "Strength", "muscleGroup": "Shoulders"}
+{"name": "Barbell Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Dumbbell Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Hammer Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Preacher Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Cable Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Cable Hammer Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Concentration Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "21s Bicep Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Incline Dumbbell Curls", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Close Grip Bench Press", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Tricep Dips", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Overhead Tricep Extension", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Dumbbell Tricep Extension", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Cable Tricep Pushdown", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Rope Tricep Pushdown", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Tricep Kickbacks", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Skull Crushers", "category": "Strength", "muscleGroup": "Arms"}
+{"name": "Squats", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Back Squats", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Front Squats", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Goblet Squats", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Bulgarian Split Squats", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Leg Press", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Leg Extensions", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Walking Lunges", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Reverse Lunges", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Jump Squats", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Stiff Leg Deadlift", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Leg Curls", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Lying Leg Curls", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Standing Leg Curls", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Hip Thrusts", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Glute Bridges", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Good Mornings", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Calf Raises", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Standing Calf Raises", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Seated Calf Raises", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Donkey Calf Raises", "category": "Strength", "muscleGroup": "Legs"}
+{"name": "Plank", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Side Plank", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Crunches", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Bicycle Crunches", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Russian Twists", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Mountain Climbers", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Dead Bug", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Bird Dog", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Hanging Leg Raises", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Cable Crunches", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Ab Wheel Rollout", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Leg Raises", "category": "Strength", "muscleGroup": "Core"}
+{"name": "V-Ups", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Flutter Kicks", "category": "Strength", "muscleGroup": "Core"}
+{"name": "Treadmill Running", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Treadmill Walking", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Elliptical", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Stationary Bike", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Rowing Machine", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "StairMaster", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Jump Rope", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Burpees", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "High Knees", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Jumping Jacks", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Box Jumps", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Battle Ropes", "category": "Cardio", "muscleGroup": "Full Body"}
+{"name": "Downward Dog", "category": "Flexibility", "muscleGroup": "Full Body"}
+{"name": "Child's Pose", "category": "Flexibility", "muscleGroup": "Full Body"}
+{"name": "Cobra Stretch", "category": "Flexibility", "muscleGroup": "Back"}
+{"name": "Cat-Cow Stretch", "category": "Flexibility", "muscleGroup": "Back"}
+{"name": "Pigeon Pose", "category": "Flexibility", "muscleGroup": "Legs"}
+{"name": "Hamstring Stretch", "category": "Flexibility", "muscleGroup": "Legs"}
+{"name": "Quad Stretch", "category": "Flexibility", "muscleGroup": "Legs"}
+{"name": "Calf Stretch", "category": "Flexibility", "muscleGroup": "Legs"}
+{"name": "Shoulder Rolls", "category": "Flexibility", "muscleGroup": "Shoulders"}
+{"name": "Arm Circles", "category": "Flexibility", "muscleGroup": "Arms"}
+{"name": "Hip Circles", "category": "Flexibility", "muscleGroup": "Core"}
+{"name": "Neck Stretch", "category": "Flexibility", "muscleGroup": "Full Body"}
+{"name": "Farmers Walk", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Turkish Get-ups", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Kettlebell Swings", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Medicine Ball Slams", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Bear Crawls", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Crab Walks", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Wall Balls", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Sled Push", "category": "Functional", "muscleGroup": "Full Body"}
+{"name": "Sled Pull", "category": "Functional", "muscleGroup": "Full Body"}

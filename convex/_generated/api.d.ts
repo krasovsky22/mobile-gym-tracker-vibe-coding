@@ -21,6 +21,7 @@ import type * as trackedWorkoutExerciseSets from "../trackedWorkoutExerciseSets.
 import type * as trackedWorkoutExercises from "../trackedWorkoutExercises.js";
 import type * as trackedWorkouts from "../trackedWorkouts.js";
 import type * as users from "../users.js";
+import type * as validateMigration from "../validateMigration.js";
 import type * as workouts from "../workouts.js";
 
 /**
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   trackedWorkoutExercises: typeof trackedWorkoutExercises;
   trackedWorkouts: typeof trackedWorkouts;
   users: typeof users;
+  validateMigration: typeof validateMigration;
   workouts: typeof workouts;
 }>;
 export declare const api: FilterApi<
