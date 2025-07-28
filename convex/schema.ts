@@ -4,15 +4,33 @@ import { v } from 'convex/values';
 
 const schema = defineSchema({
   ...authTables,
-  exercises: defineTable({
+  categories: defineTable({
     name: v.string(),
-    category: v.string(),
-    muscleGroup: v.string(),
+    description: v.optional(v.string()),
     createdBy: v.optional(v.id('users')),
     updatedBy: v.optional(v.id('users')),
     createdAt: v.optional(v.number()),
     updatedAt: v.optional(v.number()),
-  }),
+  }).index('by_name', ['name']),
+  muscleGroups: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    createdBy: v.optional(v.id('users')),
+    updatedBy: v.optional(v.id('users')),
+    createdAt: v.optional(v.number()),
+    updatedAt: v.optional(v.number()),
+  }).index('by_name', ['name']),
+  exercises: defineTable({
+    name: v.string(),
+    categoryIds: v.optional(v.array(v.id('categories'))),
+    muscleGroupIds: v.optional(v.array(v.id('muscleGroups'))),
+    createdBy: v.optional(v.id('users')),
+    updatedBy: v.optional(v.id('users')),
+    createdAt: v.optional(v.number()),
+    updatedAt: v.optional(v.number()),
+  })
+    .index('by_name', ['name'])
+    .index('by_created_at', ['createdAt']),
   workouts: defineTable({
     name: v.string(),
     exercises: v.array(

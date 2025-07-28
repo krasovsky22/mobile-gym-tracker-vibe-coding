@@ -51,7 +51,7 @@ export default function TrackWorkoutScreen() {
           {/* Continue Current Workout Banner */}
           <ContinueWorkoutBanner />
 
-          <ThemedText className="mb-6 text-2xl font-bold text-center text-neutral-900">
+          <ThemedText className="mb-6 text-center text-2xl font-bold text-neutral-900">
             Start Workout
           </ThemedText>
 
@@ -60,7 +60,7 @@ export default function TrackWorkoutScreen() {
               key={workout._id}
               onPress={() => handleSelectWorkout(workout)}
               className="mb-4">
-              <ThemedView className="p-4 border border-gray-200 rounded-lg">
+              <ThemedView className="rounded-lg border border-gray-200 p-4">
                 <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
                 <ThemedText className="text-gray-600">
                   {workout.exercises.length} exercises

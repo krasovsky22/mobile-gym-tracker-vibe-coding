@@ -33,12 +33,12 @@ export default function ContinueWorkoutBanner() {
 
   return (
     <ThemedView>
-      <ThemedText className="mb-6 text-2xl font-bold text-center text-neutral-900">
+      <ThemedText className="mb-6 text-center text-2xl font-bold text-neutral-900">
         Continue Workout
       </ThemedText>
       <TouchableOpacity onPress={handleContinue} className="mb-6">
-        <ThemedView className="p-4 border-2 border-blue-500 rounded-lg shadow-sm bg-blue-50">
-          <View className="flex-row items-center justify-between mb-2">
+        <ThemedView className="rounded-lg border-2 border-blue-500 bg-blue-50 p-4 shadow-sm">
+          <View className="mb-2 flex-row items-center justify-between">
             <ThemedText className="text-lg font-bold text-blue-900">Continue Workout</ThemedText>
             <ThemedText className="text-sm text-blue-700">
               {formatElapsedTime(currentInProgressWorkout.startTime)}
@@ -49,7 +49,7 @@ export default function ContinueWorkoutBanner() {
             {currentInProgressWorkout.workout.name}
           </ThemedText>
 
-          <View className="flex-row items-center justify-between mb-3">
+          <View className="mb-3 flex-row items-center justify-between">
             <ThemedText className="text-sm text-blue-700">
               {currentInProgressWorkout.completedExercises} of{' '}
               {currentInProgressWorkout.totalExercises} exercises completed
@@ -60,9 +60,9 @@ export default function ContinueWorkoutBanner() {
           </View>
 
           {/* Progress Bar */}
-          <View className="h-2 mb-3 overflow-hidden bg-blue-200 rounded-full">
+          <View className="mb-3 h-2 overflow-hidden rounded-full bg-blue-200">
             <View
-              className="h-full transition-all duration-300 bg-blue-500"
+              className="h-full bg-blue-500 transition-all duration-300"
               style={{ width: `${currentInProgressWorkout.completionPercentage}%` }}
             />
           </View>

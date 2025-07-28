@@ -1,7 +1,7 @@
-import { useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, SafeAreaView } from 'react-native';
+import { ScrollView, SafeAreaView, Alert } from 'react-native';
 
 import { api } from '../../convex/_generated/api';
 
@@ -23,15 +23,48 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
   const { error } = useAlert();
   const [name, setName] = useState(initialData?.name ?? '');
   const [category, setCategory] = useState(initialData?.category ?? '');
-  const [muscleGroup, setMuscleGroup] = useState(initialData?.muscleGroup ?? '');
+  const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>(
+    initialData?.muscleGroup ? [initialData.muscleGroup] : []
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const createExercise = useMutation(api.exercises.create);
   const updateExercise = useMutation(api.exercises.update);
+  const muscleGroups = useQuery(api.muscleGroups.list);
+
+  const availableMuscleGroups = muscleGroups?.map((mg) => mg.name) || [];
+
+  const handleMuscleGroupToggle = (muscleGroup: string) => {
+    setSelectedMuscleGroups((prev) => {
+      if (prev.includes(muscleGroup)) {
+        return prev.filter((mg) => mg !== muscleGroup);
+      } else {
+        return [...prev, muscleGroup];
+      }
+    });
+  };
+
+  const showMuscleGroupPicker = () => {
+    if (availableMuscleGroups.length === 0) {
+      error('Muscle groups are still loading. Please try again in a moment.');
+      return;
+    }
+
+    Alert.alert('Select Muscle Groups', 'Choose the muscle groups this exercise targets', [
+      ...availableMuscleGroups.map((muscleGroup) => ({
+        text: `${selectedMuscleGroups.includes(muscleGroup) ? '✓ ' : ''}${muscleGroup}`,
+        onPress: () => handleMuscleGroupToggle(muscleGroup),
+      })),
+      {
+        text: 'Done',
+        style: 'cancel',
+      },
+    ]);
+  };
 
   const handleSubmit = async () => {
-    if (!name || !category || !muscleGroup) {
-      return error('Please fill in all fields');
+    if (!name || !category || selectedMuscleGroups.length === 0) {
+      return error('Please fill in all fields and select at least one muscle group');
     }
 
     setIsSubmitting(true);
@@ -40,15 +73,15 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
       if (mode === 'add') {
         await createExercise({
           name,
-          category,
-          muscleGroup,
+          categories: category,
+          muscleGroups: selectedMuscleGroups,
         });
       } else if (mode === 'edit' && exerciseId) {
         await updateExercise({
           id: exerciseId,
           name,
-          category,
-          muscleGroup,
+          categories: category,
+          muscleGroups: selectedMuscleGroups,
         });
       }
       router.back();
@@ -63,7 +96,7 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
-        <ThemedView className="flex-row items-center p-4 border-b border-gray-200">
+        <ThemedView className="flex-row items-center border-b border-gray-200 p-4">
           <ThemedButton
             variant="secondary"
             size="md"
@@ -92,12 +125,21 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
           </ThemedView>
 
           <ThemedView className="mb-4">
-            <ThemedText className="mb-2 text-lg font-semibold">Muscle Group</ThemedText>
-            <ThemedTextInput
-              value={muscleGroup}
-              onChangeText={setMuscleGroup}
-              placeholder="e.g., Chest"
-            />
+            <ThemedText className="mb-2 text-lg font-semibold">Muscle Groups</ThemedText>
+            <ThemedButton
+              variant="secondary"
+              size="md"
+              onPress={showMuscleGroupPicker}
+              className="mb-2">
+              {selectedMuscleGroups.length > 0
+                ? `Selected: ${selectedMuscleGroups.join(', ')}`
+                : 'Select Muscle Groups'}
+            </ThemedButton>
+            {selectedMuscleGroups.length === 0 && (
+              <ThemedText className="text-sm text-gray-500">
+                Please select at least one muscle group
+              </ThemedText>
+            )}
           </ThemedView>
 
           <ThemedButton

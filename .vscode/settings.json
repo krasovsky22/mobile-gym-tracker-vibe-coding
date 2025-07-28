@@ -1,7 +1,7 @@
 {
-    "github.copilot.chat.codeGeneration.instructions": [
-        {
-            "file": ".copilot-project-analysis.md"
-        }
-    ]
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": ".copilot-project-analysis.md"
+    }
+  ]
 }

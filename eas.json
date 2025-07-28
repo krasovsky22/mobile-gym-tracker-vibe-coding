@@ -1,35 +1,34 @@
 {
-    "build": {
-      "base": {
-        "node": "22.15.0",
-        "yarn": "1.22.22",
-        "env": {
-          "EXPO_PUBLIC_CONVEX_URL": "${EXPO_PUBLIC_CONVEX_URL}"
-        },
-        "ios": {
-          "image": "latest",
-          "env": {
-            "PLATFORM": "ios"
-          }
-        }
+  "build": {
+    "base": {
+      "node": "22.15.0",
+      "yarn": "1.22.22",
+      "env": {
+        "EXPO_PUBLIC_CONVEX_URL": "${EXPO_PUBLIC_CONVEX_URL}"
       },
-      "development": {
-        "extends": "base",
-        "developmentClient": true,
+      "ios": {
+        "image": "latest",
         "env": {
-          "ENVIRONMENT": "development"
-        },
-        "ios": {
-          "simulator": true
+          "PLATFORM": "ios"
         }
+      }
+    },
+    "development": {
+      "extends": "base",
+      "developmentClient": true,
+      "env": {
+        "ENVIRONMENT": "development"
       },
-      "production": {
-        "extends": "base",
-        "distribution": "internal",
-        "env": {
-          "ENVIRONMENT": "production"
-        }
+      "ios": {
+        "simulator": true
+      }
+    },
+    "production": {
+      "extends": "base",
+      "distribution": "internal",
+      "env": {
+        "ENVIRONMENT": "production"
       }
     }
   }
-  
+}

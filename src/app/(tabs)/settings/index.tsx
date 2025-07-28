@@ -47,6 +47,13 @@ export default function SettingsScreen() {
 
           <TouchableOpacity
             className="rounded-lg border border-neutral-200 p-4"
+            onPress={() => router.push('/settings/migration')}>
+            <ThemedText className="text-lg font-semibold">Database Migration</ThemedText>
+            <ThemedText className="text-neutral-500">Populate database with exercises</ThemedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="rounded-lg border border-neutral-200 p-4"
             onPress={() => router.push('/settings/about')}>
             <ThemedText className="text-lg font-semibold">About</ThemedText>
             <ThemedText className="text-neutral-500">App version 1.0.0</ThemedText>
