@@ -3,10 +3,11 @@ import { Id } from 'convex/_generated/dataModel';
 import { useQuery } from 'convex/react';
 import { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAlert } from '../context/alert';
 
-import { ThemedText, ThemedView } from '~/theme';
+import { ThemedButton, ThemedText, ThemedView } from '~/theme';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -29,6 +30,7 @@ export default function ExerciseSelectModal({
   const { error } = useAlert();
   const exercises = useQuery(api.exercises.list);
   const [searchQuery, setSearchQuery] = useState('');
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (visible) {
@@ -57,17 +59,17 @@ export default function ExerciseSelectModal({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <ThemedView className="flex-1 bg-white">
-        <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
-          <TouchableOpacity className="mr-4 rounded-lg bg-neutral-100 px-4 py-2" onPress={onClose}>
-            <ThemedText className="font-semibold text-neutral-700">Cancel</ThemedText>
-          </TouchableOpacity>
+      <ThemedView className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <ThemedView className="flex-row items-center p-4 border-b border-neutral-200">
+          <ThemedButton onPress={onClose} className="mr-4" variant="secondary">
+            Close
+          </ThemedButton>
           <ThemedText className="text-xl font-semibold">Select Exercise</ThemedText>
         </ThemedView>
 
         <ThemedView className="flex-1 p-4">
           <TextInput
-            className="mb-4 rounded-lg border border-neutral-300 p-3"
+            className="p-3 mb-4 border rounded-lg border-neutral-300"
             placeholder="Search exercises..."
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -80,7 +82,7 @@ export default function ExerciseSelectModal({
               filteredExercises?.map((exercise) => (
                 <TouchableOpacity
                   key={exercise._id}
-                  className="mb-2 rounded-lg border border-neutral-200 p-4"
+                  className="p-4 mb-2 border rounded-lg border-neutral-200"
                   onPress={() => onSelect(exercise._id)}>
                   <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
                   <ThemedText className="text-neutral-600">{exercise.category}</ThemedText>

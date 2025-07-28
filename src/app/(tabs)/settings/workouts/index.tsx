@@ -65,7 +65,7 @@ export default function WorkoutsScreen() {
 
         <ScrollView className="flex-1 px-4">
           {filteredWorkouts?.map((workout: Workout) => (
-            <ThemedView key={workout._id} className="mb-4 rounded-lg border border-neutral-200 p-4">
+            <ThemedView key={workout._id} className="p-4 mb-4 border rounded-lg border-neutral-200">
               <ThemedView className="flex-row justify-between">
                 <ThemedView className="flex-1">
                   <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
@@ -99,8 +99,8 @@ export default function WorkoutsScreen() {
           ))}
         </ScrollView>
 
-        <ThemedView className="border-t border-neutral-200 bg-white p-4">
-          <ThemedButton variant="primary" onPress={() => router.push('/settings/workouts/create')}>
+        <ThemedView className="p-4 bg-white border-t border-neutral-200">
+          <ThemedButton variant="primary" onPress={() => router.push('/settings/workouts/add')}>
             Create Workout
           </ThemedButton>
         </ThemedView>

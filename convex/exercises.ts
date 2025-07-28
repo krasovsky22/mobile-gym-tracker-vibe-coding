@@ -226,7 +226,7 @@ export const list = query({
       throw new Error('Not authenticated');
     }
 
-    const exercises = await ctx.db.query('exercises').order('desc').collect();
+    const exercises = await ctx.db.query('exercises').withIndex('by_name').collect();
 
     // Populate category and muscle group information for each exercise
     const exercisesWithDetails = await Promise.all(
@@ -265,7 +265,7 @@ export const listWithCategoryDetails = query({
       throw new Error('Not authenticated');
     }
 
-    const exercises = await ctx.db.query('exercises').order('desc').collect();
+    const exercises = await ctx.db.query('exercises').withIndex('by_name').collect();
 
     // Populate full category and muscle group information for each exercise
     const exercisesWithDetails = await Promise.all(
@@ -304,7 +304,7 @@ export const getByCategory = query({
     }
 
     // Since we now have arrays of categoryIds, we need to filter manually
-    const allExercises = await ctx.db.query('exercises').collect();
+    const allExercises = await ctx.db.query('exercises').withIndex('by_name').collect();
 
     const exercisesWithCategory = allExercises.filter((exercise) =>
       (exercise.categoryIds || []).includes(args.categoryId)
