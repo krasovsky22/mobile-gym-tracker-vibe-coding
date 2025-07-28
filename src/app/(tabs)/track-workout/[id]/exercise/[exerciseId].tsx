@@ -86,7 +86,7 @@ export default function TrackExerciseScreen() {
 
   if (!trackedWorkoutExercise) {
     return (
-      <ThemedView className="flex-1 items-center justify-center">
+      <ThemedView className="items-center justify-center flex-1">
         <ThemedText>Loading exercise...</ThemedText>
       </ThemedView>
     );
@@ -176,11 +176,6 @@ export default function TrackExerciseScreen() {
     const set = localSets.find((s) => s._id === setId);
     if (!set) return;
 
-    // Update local state first
-    setLocalSets((prevSets) =>
-      prevSets.map((s) => (s._id === setId ? { ...s, isCompleted: !s.isCompleted } : s))
-    );
-
     // Then persist to database
     try {
       await updateSet({
@@ -193,14 +188,17 @@ export default function TrackExerciseScreen() {
       console.error('Error updating set:', err);
       error('Failed to update set');
 
-      // Revert local state on error
-      setLocalSets((prevSets) =>
-        prevSets.map((s) => (s._id === setId ? { ...s, isCompleted: set.isCompleted } : s))
-      );
+      return;
     }
 
+    const newLocalSets = localSets.map((s) =>
+      s._id === setId ? { ...s, isCompleted: !s.isCompleted } : s
+    );
+    // Update local state first
+    setLocalSets(newLocalSets);
+
     // if all sets are completed, mark exercise as completed
-    const allSetsCompleted = localSets.every((s) => s.isCompleted);
+    const allSetsCompleted = newLocalSets.every((s) => s.isCompleted);
     if (allSetsCompleted) {
       try {
         await updateExerciseStatus({
@@ -296,7 +294,7 @@ export default function TrackExerciseScreen() {
       <SafeAreaProvider>
         <ThemedView className="flex-1">
           <SafeAreaView className="flex-1">
-            <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
+            <ThemedView className="flex-row items-center p-4 border-b border-neutral-200">
               <ThemedButton
                 variant="secondary"
                 size="md"
@@ -323,7 +321,7 @@ export default function TrackExerciseScreen() {
               <ThemedView className="flex-1 p-4">
                 <ThemedText className="mb-4 text-lg font-semibold">Sets</ThemedText>
 
-                <ThemedView className="mb-2 flex-1 rounded-lg border border-neutral-200 p-4">
+                <ThemedView className="flex-1 p-4 mb-2 border rounded-lg border-neutral-200">
                   {localSets.map((set) => (
                     <SwipeableSetRow
                       key={set._id}

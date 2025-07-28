@@ -101,12 +101,42 @@ export const get = query({
     const workoutExerciseIds = workoutExercises.map((ex) => ex.exerciseId);
     const exercises = await Promise.all(workoutExerciseIds.map((id) => ctx.db.get(id)));
 
+    // Resolve muscle groups and categories for each exercise
+    const exercisesWithDetails = await Promise.all(
+      exercises.map(async (exercise) => {
+        if (!exercise) return null;
+
+        // Get all muscle groups for this exercise
+        const muscleGroups = await Promise.all(
+          (exercise.muscleGroupIds || []).map((muscleGroupId) => ctx.db.get(muscleGroupId))
+        );
+
+        // Get all categories for this exercise
+        const categories = await Promise.all(
+          (exercise.categoryIds || []).map((categoryId) => ctx.db.get(categoryId))
+        );
+
+        const muscleGroupNames = muscleGroups.filter(Boolean).map((mg) => mg!.name);
+        const categoryNames = categories.filter(Boolean).map((cat) => cat!.name);
+
+        return {
+          ...exercise,
+          muscleGroups: muscleGroupNames,
+          categories: categoryNames,
+          // Backward compatibility: provide first muscle group as muscleGroup
+          muscleGroup: muscleGroupNames[0] || 'Unknown',
+          // Backward compatibility: provide first category as category
+          category: categoryNames[0] || 'Unknown',
+        } as any;
+      })
+    );
+
     // Combine workout with its exercises
     const workoutWithExercises = {
       ...workout,
       exercises: workoutExercises.map((ex, index) => ({
         ...ex,
-        exercise: exercises[index],
+        exercise: exercisesWithDetails[index],
       })),
     };
 
@@ -122,6 +152,32 @@ export const get = query({
         // Get the exercise details
         const exerciseDetails = await ctx.db.get(trackedExercise.exerciseId);
 
+        let exerciseWithDetails = exerciseDetails;
+        if (exerciseDetails) {
+          // Get all muscle groups for this exercise
+          const muscleGroups = await Promise.all(
+            (exerciseDetails.muscleGroupIds || []).map((muscleGroupId) => ctx.db.get(muscleGroupId))
+          );
+
+          // Get all categories for this exercise
+          const categories = await Promise.all(
+            (exerciseDetails.categoryIds || []).map((categoryId) => ctx.db.get(categoryId))
+          );
+
+          const muscleGroupNames = muscleGroups.filter(Boolean).map((mg) => mg!.name);
+          const categoryNames = categories.filter(Boolean).map((cat) => cat!.name);
+
+          exerciseWithDetails = {
+            ...exerciseDetails,
+            muscleGroups: muscleGroupNames,
+            categories: categoryNames,
+            // Backward compatibility: provide first muscle group as muscleGroup
+            muscleGroup: muscleGroupNames[0] || 'Unknown',
+            // Backward compatibility: provide first category as category
+            category: categoryNames[0] || 'Unknown',
+          } as any;
+        }
+
         // Get all sets for this exercise
         const sets = await ctx.db
           .query('trackedWorkoutExerciseSets')
@@ -130,7 +186,7 @@ export const get = query({
 
         return {
           ...trackedExercise,
-          exercise: exerciseDetails,
+          exercise: exerciseWithDetails,
           sets: sets.sort((a, b) => a.setNumber - b.setNumber),
         };
       })
@@ -195,5 +251,47 @@ export const getCurrentInProgress = query({
       currentExercise,
       startTime: inProgressWorkout.createdAt,
     };
+  },
+});
+
+export const complete = mutation({
+  args: {
+    id: v.id('trackedWorkouts'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getUserId(ctx);
+
+    // Get the tracked workout and verify ownership
+    const trackedWorkout = await ctx.db.get(args.id);
+    if (!trackedWorkout) {
+      throw new Error('Tracked workout not found');
+    }
+
+    if (trackedWorkout.userId !== userId) {
+      throw new Error('Unauthorized');
+    }
+
+    // Verify that all exercises are completed
+    const trackedExercises = await ctx.db
+      .query('trackedWorkoutExercises')
+      .filter((q) => q.eq(q.field('trackedWorkoutId'), args.id))
+      .collect();
+
+    const allExercisesCompleted = trackedExercises.every(
+      (exercise) => exercise.status === 'completed'
+    );
+
+    if (!allExercisesCompleted) {
+      throw new Error('All exercises must be completed before finishing the workout');
+    }
+
+    // Update the tracked workout status to completed
+    await ctx.db.patch(args.id, {
+      status: 'completed',
+      completedAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+
+    return args.id;
   },
 });

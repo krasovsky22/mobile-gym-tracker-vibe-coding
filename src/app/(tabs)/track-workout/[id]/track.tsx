@@ -3,7 +3,7 @@ import { api } from 'convex/_generated/api';
 import { Id } from 'convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -12,9 +12,11 @@ import { ThemedButton, ThemedText, ThemedView } from '~/theme';
 
 export default function TrackWorkoutDetailsScreen() {
   const router = useRouter();
-  const { error } = useAlert();
+  const { error, success } = useAlert();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [isCompleting, setIsCompleting] = useState(false);
   const moveToNextExercise = useMutation(api.trackedWorkoutExercises.moveToNextExercise);
+  const completeWorkout = useMutation(api.trackedWorkouts.complete);
 
   // Query for tracked workout and all related data
   const trackedWorkoutData = useQuery(api.trackedWorkouts.get, {
@@ -56,9 +58,29 @@ export default function TrackWorkoutDetailsScreen() {
     }
   };
 
+  const handleCompleteWorkout = async () => {
+    if (!trackedWorkoutData || !id) return;
+
+    setIsCompleting(true);
+    try {
+      await completeWorkout({ id: id as Id<'trackedWorkouts'> });
+
+      // Show success message
+      success('Workout completed successfully! Great job!');
+
+      // Navigate back to the main workout tracking screen
+      router.push('/track-workout');
+    } catch (err) {
+      console.error('Error completing workout:', err);
+      error('Failed to complete workout. Make sure all exercises are finished.');
+    } finally {
+      setIsCompleting(false);
+    }
+  };
+
   if (!trackedWorkoutData) {
     return (
-      <ThemedView className="flex-1 items-center justify-center">
+      <ThemedView className="items-center justify-center flex-1">
         <ThemedText>Loading workout...</ThemedText>
       </ThemedView>
     );
@@ -68,7 +90,7 @@ export default function TrackWorkoutDetailsScreen() {
     <SafeAreaProvider>
       <ThemedView className="flex-1">
         <SafeAreaView className="flex-1">
-          <ThemedView className="flex-row items-center border-b border-neutral-200 p-4">
+          <ThemedView className="flex-row items-center p-4 border-b border-neutral-200">
             <ThemedButton
               variant="secondary"
               size="md"
@@ -97,9 +119,9 @@ export default function TrackWorkoutDetailsScreen() {
                 return (
                   <ThemedView
                     key={exercise._id}
-                    className="mb-4 w-full flex-1 flex-row items-center rounded-lg border p-4">
+                    className="flex-row items-center flex-1 w-full p-4 mb-4 border rounded-lg">
                     <ThemedView className="flex-1 ">
-                      <ThemedView className="flex-1 flex-row items-center justify-between ">
+                      <ThemedView className="flex-row items-center justify-between flex-1 ">
                         <ThemedView className="flex-1">
                           <ThemedView className="flex-row items-center">
                             <ThemedText className="text-lg font-semibold">
@@ -119,7 +141,7 @@ export default function TrackWorkoutDetailsScreen() {
                           {trackedWorkoutData.trackedExercises
                             ?.find((te) => te.exerciseId === exercise._id)
                             ?.sets.map((set, index) => (
-                              <ThemedView key={index} className="mt-1 flex-row items-center">
+                              <ThemedView key={index} className="flex-row items-center mt-1">
                                 <ThemedText className="text-sm text-neutral-600">
                                   Set {set.setNumber}: {set.weight}kg × {set.reps} reps
                                 </ThemedText>
@@ -134,7 +156,7 @@ export default function TrackWorkoutDetailsScreen() {
                       )}
                     </ThemedView>
                     {isCompleted && (
-                      <ThemedView className="ml-2 items-center justify-center rounded-full bg-green-500 p-2">
+                      <ThemedView className="items-center justify-center p-2 ml-2 bg-green-500 rounded-full">
                         <Ionicons name="checkmark-circle-outline" size={24} color="white" />
                       </ThemedView>
                     )}
@@ -155,8 +177,8 @@ export default function TrackWorkoutDetailsScreen() {
             </ThemedView>
           </ScrollView>
 
-          <ThemedView className="border-t border-neutral-200 p-4">
-            <ThemedText className="mb-2 text-center text-sm text-neutral-600">
+          <ThemedView className="p-4 border-t border-neutral-200">
+            <ThemedText className="mb-2 text-sm text-center text-neutral-600">
               Track all exercises to complete the workout
             </ThemedText>
             <ThemedButton
@@ -164,12 +186,11 @@ export default function TrackWorkoutDetailsScreen() {
               size="lg"
               className="w-full"
               disabled={
+                isCompleting ||
                 !trackedWorkoutData.trackedExercises?.every((te) => te.status === 'completed')
               }
-              onPress={() => {
-                // TODO: Implement workout completion
-              }}>
-              Complete Workout
+              onPress={handleCompleteWorkout}>
+              {isCompleting ? 'Completing Workout...' : 'Complete Workout'}
             </ThemedButton>
           </ThemedView>
         </SafeAreaView>
