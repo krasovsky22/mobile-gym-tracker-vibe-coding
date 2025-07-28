@@ -27,6 +27,29 @@ export const get = query({
     if (!exercise) {
       throw new Error('Exercise not found');
     }
+
+    // Get all categories for this exercise
+    const categories = await Promise.all(
+      (exercise.categoryIds || []).map((categoryId) => ctx.db.get(categoryId))
+    );
+
+    // Get all muscle groups for this exercise
+    const muscleGroups = await Promise.all(
+      (exercise.muscleGroupIds || []).map((muscleGroupId) => ctx.db.get(muscleGroupId))
+    );
+
+    const categoryNames = categories.filter(Boolean).map((cat) => cat!.name);
+    const muscleGroupNames = muscleGroups.filter(Boolean).map((mg) => mg!.name);
+
+    // Enrich exercise with resolved names for backward compatibility
+    const enrichedExercise = {
+      ...exercise,
+      categories: categoryNames,
+      category: categoryNames[0] || 'Unknown', // For backward compatibility
+      muscleGroups: muscleGroupNames,
+      muscleGroup: muscleGroupNames[0] || 'Unknown', // For backward compatibility
+    };
+
     // Get all sets for this tracked workout exercise
     const sets = await ctx.db
       .query('trackedWorkoutExerciseSets')
@@ -34,7 +57,7 @@ export const get = query({
       .collect();
     return {
       ...trackedWorkoutExercise,
-      exercise,
+      exercise: enrichedExercise,
       sets: sets.sort((a, b) => a.setNumber - b.setNumber),
     };
   },
