@@ -1,13 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ProtectedRoute } from '~/components';
 import { useTheme } from '~/context/theme';
 
 export default function TabLayout() {
-  const router = useRouter();
-
   const { isDarkMode } = useTheme();
 
   return (

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useState, useMemo } from 'react';
 import { ScrollView, SafeAreaView } from 'react-native';
 
+import { Loading } from '~/components';
 import { useAlert } from '~/context/alert';
 import { ThemedText, ThemedTextInput, ThemedView, ThemedButton } from '~/theme';
 
@@ -48,6 +49,10 @@ export default function ExercisesScreen() {
     router.push(`/settings/exercises/${exerciseId}/edit`);
   };
 
+  if (exercises === undefined) {
+    return <Loading text="Loading exercises..." />;
+  }
+
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
@@ -60,36 +65,46 @@ export default function ExercisesScreen() {
         </ThemedView>
 
         <ScrollView className="flex-1 px-4">
-          {filteredExercises.map((exercise) => (
-            <ThemedView key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
-              <ThemedView className="flex-row justify-between">
-                <ThemedView className="flex-1">
-                  <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
-                  <ThemedText className="text-neutral-500">
-                    Category: {exercise.category}
-                  </ThemedText>
-                  <ThemedText className="text-neutral-500">
-                    Muscle Group: {exercise.muscleGroup}
-                  </ThemedText>
-                </ThemedView>
-                <ThemedView className="flex-row items-center gap-2 space-x-2">
-                  <ThemedButton
-                    variant="secondary"
-                    size="sm"
-                    onPress={() => handleEdit(exercise._id)}>
-                    Edit
-                  </ThemedButton>
-                  <ThemedButton
-                    variant="danger"
-                    size="sm"
-                    onPress={() => handleDelete(exercise._id)}
-                    disabled={isDeleting}>
-                    Delete
-                  </ThemedButton>
+          {filteredExercises.length === 0 ? (
+            <ThemedView className="flex-1 items-center justify-center py-8">
+              <ThemedText className="text-center text-neutral-500">
+                {searchQuery
+                  ? 'No exercises found matching your search.'
+                  : 'No exercises yet. Add your first exercise below!'}
+              </ThemedText>
+            </ThemedView>
+          ) : (
+            filteredExercises.map((exercise) => (
+              <ThemedView key={exercise._id} className="mb-4 rounded-lg border border-gray-200 p-4">
+                <ThemedView className="flex-row justify-between">
+                  <ThemedView className="flex-1">
+                    <ThemedText className="text-lg font-semibold">{exercise.name}</ThemedText>
+                    <ThemedText className="text-neutral-500">
+                      Category: {exercise.category}
+                    </ThemedText>
+                    <ThemedText className="text-neutral-500">
+                      Muscle Group: {exercise.muscleGroup}
+                    </ThemedText>
+                  </ThemedView>
+                  <ThemedView className="flex-row items-center gap-2 space-x-2">
+                    <ThemedButton
+                      variant="secondary"
+                      size="sm"
+                      onPress={() => handleEdit(exercise._id)}>
+                      Edit
+                    </ThemedButton>
+                    <ThemedButton
+                      variant="danger"
+                      size="sm"
+                      onPress={() => handleDelete(exercise._id)}
+                      disabled={isDeleting}>
+                      Delete
+                    </ThemedButton>
+                  </ThemedView>
                 </ThemedView>
               </ThemedView>
-            </ThemedView>
-          ))}
+            ))
+          )}
         </ScrollView>
 
         <ThemedView className="bg-white p-4 dark:bg-neutral-800">
