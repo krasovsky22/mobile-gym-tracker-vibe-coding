@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 
+import { api } from './_generated/api';
 import { Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 import { getUserId } from './users';
@@ -277,13 +278,14 @@ export const complete = mutation({
       .filter((q) => q.eq(q.field('trackedWorkoutId'), args.id))
       .collect();
 
-    const allExercisesCompleted = trackedExercises.every(
-      (exercise) => exercise.status === 'completed'
+    await Promise.all(
+      trackedExercises.map(async (exercise) => {
+        return ctx.runMutation(api.trackedWorkoutExercises.updateStatus, {
+          status: 'completed',
+          id: exercise._id,
+        });
+      })
     );
-
-    if (!allExercisesCompleted) {
-      throw new Error('All exercises must be completed before finishing the workout');
-    }
 
     // Update the tracked workout status to completed
     await ctx.db.patch(args.id, {

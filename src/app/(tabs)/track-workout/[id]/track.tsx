@@ -14,6 +14,7 @@ export default function TrackWorkoutDetailsScreen() {
   const router = useRouter();
   const { error, success } = useAlert();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const moveToNextExercise = useMutation(api.trackedWorkoutExercises.moveToNextExercise);
   const completeWorkout = useMutation(api.trackedWorkouts.complete);
@@ -37,6 +38,7 @@ export default function TrackWorkoutDetailsScreen() {
     if (!trackedWorkoutData) return;
 
     try {
+      setIsLoading(true);
       const trackedExerciseId = await moveToNextExercise({
         trackedWorkoutId: id as Id<'trackedWorkouts'>,
         selectedExerciseId: exerciseId as Id<'exercises'>,
@@ -53,6 +55,7 @@ export default function TrackWorkoutDetailsScreen() {
         },
       });
     } catch (err) {
+      setIsLoading(false);
       console.error('Error starting exercise:', err);
       error('Failed to start exercise');
     }
@@ -163,6 +166,7 @@ export default function TrackWorkoutDetailsScreen() {
                     {!isCompleted && (
                       <ThemedButton
                         variant={isCompleted ? 'success' : isStarted ? 'secondary' : 'primary'}
+                        disabled={isLoading}
                         onPress={() =>
                           isStarted
                             ? handleContinueExercise(trackedExercise._id)
@@ -185,10 +189,7 @@ export default function TrackWorkoutDetailsScreen() {
               variant="primary"
               size="lg"
               className="w-full"
-              disabled={
-                isCompleting ||
-                !trackedWorkoutData.trackedExercises?.every((te) => te.status === 'completed')
-              }
+              disabled={isCompleting}
               onPress={handleCompleteWorkout}>
               {isCompleting ? 'Completing Workout...' : 'Complete Workout'}
             </ThemedButton>
