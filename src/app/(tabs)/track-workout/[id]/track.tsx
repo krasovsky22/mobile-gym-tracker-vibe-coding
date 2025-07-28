@@ -12,7 +12,7 @@ import { ThemedButton, ThemedText, ThemedView } from '~/theme';
 
 export default function TrackWorkoutDetailsScreen() {
   const router = useRouter();
-  const { error, success } = useAlert();
+  const { error, fireworks } = useAlert();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
@@ -69,7 +69,7 @@ export default function TrackWorkoutDetailsScreen() {
       await completeWorkout({ id: id as Id<'trackedWorkouts'> });
 
       // Show success message
-      success('Workout completed successfully! Great job!');
+      fireworks('Workout completed successfully! Great job!');
 
       // Navigate back to the main workout tracking screen
       router.push('/track-workout');
