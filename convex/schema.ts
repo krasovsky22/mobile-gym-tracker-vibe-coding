@@ -39,6 +39,10 @@ const schema = defineSchema({
         sets: v.number(),
       })
     ),
+    createdBy: v.optional(v.id('users')),
+    updatedBy: v.optional(v.id('users')),
+    createdAt: v.optional(v.number()),
+    updatedAt: v.optional(v.number()),
   }),
 
   // Tracking workout
