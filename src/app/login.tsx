@@ -77,29 +77,21 @@ export default function LoginScreen() {
     setPassword('');
   };
 
-  console.log(assets?.[0]?.uri);
   return (
     <Container>
       <ThemedView className="flex-1 bg-[#121516]">
         <SafeAreaView className="flex-1">
-          {/* Background Image Section */}
-          {assets?.length && (
-            <ImageBackground
-              //   contentFit="cover"
-              source={{ uri: assets[0]?.uri ?? '' }}
-              //   className="absolute justify-end flex-1 w-screen h-screen"
-            >
-              {/* Content Overlay */}
-            </ImageBackground>
-          )}
+          {/* Background Image Section - Method 1: Direct require (Recommended) */}
+          <ImageBackground
+            source={require('~assets/login-motivation.png')}
+            style={{ flex: 1 }}
+            resizeMode="cover"
+            className="absolute inset-0">
+            {/* Content Overlay */}
+          </ImageBackground>
 
           <ThemedView className="flex-1 justify-end" transparent>
             <ThemedView className="" transparent>
-              {/* Pull Indicator */}
-              {/* <ThemedView className="flex items-center justify-center w-full h-5">
-                  <ThemedView className="h-1 w-9 rounded-full bg-[#40494f]" />
-                </ThemedView> */}
-
               {/* Main Content */}
               <ThemedView className="gap-2 px-4 pb-6" transparent>
                 {/* Header */}
@@ -119,9 +111,7 @@ export default function LoginScreen() {
                     icon="logo-google"
                     className="h-10 rounded-full border border-[#dadce0] bg-white"
                     onPress={() => {}}>
-                    <ThemedText className="text-sm font-semibold text-[#3c4043]">
-                      Continue with Google
-                    </ThemedText>
+                    <ThemedText className="text-sm font-semibold">Continue with Google</ThemedText>
                   </ThemedButton>
 
                   <ThemedButton
@@ -136,7 +126,7 @@ export default function LoginScreen() {
                 </ThemedView>
 
                 {/* Divider */}
-                <ThemedText className="pb-3 pt-1 text-center text-sm font-normal leading-normal text-[#a2adb3]">
+                <ThemedText className="pb-3 pt-1 text-center text-sm font-normal leading-normal ">
                   or
                 </ThemedText>
 
@@ -152,7 +142,7 @@ export default function LoginScreen() {
 
                 {/* Sign Up Link */}
                 <ThemedButton variant="outline" size="sm" className="border-0 pb-3 pt-1">
-                  <ThemedText className="text-center text-sm font-normal text-[#a2adb3] underline">
+                  <ThemedText className="text-center text-sm font-normal underline">
                     Don't have an account? Sign up
                   </ThemedText>
                 </ThemedButton>
