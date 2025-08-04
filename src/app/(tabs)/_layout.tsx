@@ -7,7 +7,6 @@ import { useTheme } from '~/context/theme';
 
 export default function TabLayout() {
   const { isDarkMode } = useTheme();
-  const router = useRouter();
 
   return (
     <ProtectedRoute>
@@ -31,15 +30,6 @@ export default function TabLayout() {
                 <Ionicons name="home-outline" size={size} color={color} />
               ),
             }}
-            listeners={{
-              tabPress: (e) => {
-                // Prevent default behavior
-                e.preventDefault();
-
-                // Reset the home navigation state and navigate to the index
-                router.replace('/home');
-              },
-            }}
           />
           <Tabs.Screen
             name="track-workout"
@@ -50,15 +40,6 @@ export default function TabLayout() {
                 <Ionicons name="barbell-outline" size={size} color={color} />
               ),
             }}
-            listeners={{
-              tabPress: (e) => {
-                // Prevent default behavior
-                e.preventDefault();
-
-                // Reset the track-workout navigation state and navigate to the index
-                router.replace('/track-workout');
-              },
-            }}
           />
           <Tabs.Screen
             name="settings"
@@ -68,15 +49,6 @@ export default function TabLayout() {
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="settings-outline" size={size} color={color} />
               ),
-            }}
-            listeners={{
-              tabPress: (e) => {
-                // Prevent default behavior
-                e.preventDefault();
-
-                // Reset the settings navigation state and navigate to the index
-                router.replace('/settings');
-              },
             }}
           />
         </Tabs>

@@ -1,8 +1,6 @@
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useConvexAuth } from 'convex/react';
-import { Asset, useAssets } from 'expo-asset';
 import { makeRedirectUri } from 'expo-auth-session';
-import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { openAuthSessionAsync } from 'expo-web-browser';
 import { useEffect, useState } from 'react';
@@ -22,8 +20,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isUsernameModalVisible, setIsUsernameModalVisible] = useState(false);
 
-  const [assets, error] = useAssets([require('~assets/login-motivation.png')]);
-
   // Handle authentication state changes
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
@@ -31,9 +27,9 @@ export default function LoginScreen() {
     }
   }, [isAuthenticated, isLoading, redirect]);
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (provider: 'github' | 'google') => {
     try {
-      const response = await signIn('github', { redirectTo });
+      const response = await signIn(provider, { redirectTo });
 
       if (!response.redirect) {
         return;
@@ -52,14 +48,17 @@ export default function LoginScreen() {
         if (!code) {
           return;
         }
-        await signIn('github', { code });
+        await signIn(provider, { code });
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Sign in error:', error);
+        console.error(`${provider} sign in error:`, error);
       }
     }
   };
+
+  const handleGoogleSignIn = () => handleSignIn('google');
+  const handleGitHubSignIn = () => handleSignIn('github');
 
   const handleUsernamePasswordSignIn = () => {
     // TODO: Implement username/password authentication
@@ -110,7 +109,7 @@ export default function LoginScreen() {
                     fullWidth
                     icon="logo-google"
                     className="h-10 rounded-full border border-[#dadce0] bg-white"
-                    onPress={() => {}}>
+                    onPress={handleGoogleSignIn}>
                     <ThemedText className="text-sm font-semibold">Continue with Google</ThemedText>
                   </ThemedButton>
 
@@ -120,7 +119,7 @@ export default function LoginScreen() {
                     fullWidth
                     icon="logo-github"
                     className="h-10 rounded-full border border-[#30363d] bg-[#24292f]"
-                    onPress={handleSignIn}>
+                    onPress={handleGitHubSignIn}>
                     Continue with GitHub
                   </ThemedButton>
                 </ThemedView>
