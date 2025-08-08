@@ -297,3 +297,42 @@ export const complete = mutation({
     return args.id;
   },
 });
+
+// Delete a tracked workout and cascade delete its exercises and sets
+export const remove = mutation({
+  args: { id: v.id('trackedWorkouts') },
+  handler: async (ctx, args) => {
+    const userId = await getUserId(ctx);
+
+    const trackedWorkout = await ctx.db.get(args.id);
+    if (!trackedWorkout) {
+      throw new Error('Tracked workout not found');
+    }
+    if (trackedWorkout.userId !== userId) {
+      throw new Error('Unauthorized');
+    }
+
+    // Fetch all tracked exercises for this workout
+    const trackedExercises = await ctx.db
+      .query('trackedWorkoutExercises')
+      .filter((q) => q.eq(q.field('trackedWorkoutId'), args.id))
+      .collect();
+
+    // For each tracked exercise, delete its sets, then the exercise itself
+    await Promise.all(
+      trackedExercises.map(async (exercise) => {
+        const sets = await ctx.db
+          .query('trackedWorkoutExerciseSets')
+          .filter((q) => q.eq(q.field('trackedWorkoutExerciseId'), exercise._id))
+          .collect();
+
+        await Promise.all(sets.map((set) => ctx.db.delete(set._id)));
+        await ctx.db.delete(exercise._id);
+      })
+    );
+
+    // Finally, delete the tracked workout
+    await ctx.db.delete(args.id);
+    return args.id;
+  },
+});
