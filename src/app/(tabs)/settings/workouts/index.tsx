@@ -7,7 +7,7 @@ import { ScrollView, SafeAreaView, Pressable } from 'react-native';
 
 import { WorkoutPreviewModal } from '~/components';
 import { useAlert } from '~/context/alert';
-import { ThemedText, ThemedButton, ThemedView, ThemedTextInput } from '~/theme';
+import { ThemedText, ThemedButton, ThemedView, ThemedTextInput, ThemedBadge } from '~/theme';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -124,17 +124,15 @@ export default function WorkoutsScreen() {
               style={({ pressed }) => ({
                 opacity: pressed ? 0.7 : 1,
               })}>
-              <ThemedView className="p-4 border rounded-lg border-neutral-200">
+              <ThemedView className="rounded-lg border border-neutral-200 p-4">
                 <ThemedView className="flex-row justify-between">
                   <ThemedView className="flex-1">
                     <ThemedView className="flex-row items-center gap-2">
                       <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
-                      {isPublicWorkout(workout) && (
-                        <ThemedView className="px-2 py-1 bg-blue-100 rounded-full">
-                          <ThemedText className="text-xs font-medium text-blue-800">
-                            Public
-                          </ThemedText>
-                        </ThemedView>
+                      {isPublicWorkout(workout) ? (
+                        <ThemedBadge variant="info">Public</ThemedBadge>
+                      ) : (
+                        <ThemedBadge variant="neutral">Private</ThemedBadge>
                       )}
                     </ThemedView>
                     <ThemedText className="text-neutral-600">
@@ -185,7 +183,7 @@ export default function WorkoutsScreen() {
           onClose={closePreview}
         />
 
-        <ThemedView className="p-4 bg-white border-t border-neutral-200">
+        <ThemedView className="border-t border-neutral-200 bg-white p-4">
           <ThemedButton variant="primary" onPress={() => router.push('/settings/workouts/add')}>
             Create Workout
           </ThemedButton>

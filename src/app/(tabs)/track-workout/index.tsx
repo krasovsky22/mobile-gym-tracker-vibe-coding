@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 
 import { ContinueWorkoutBanner } from '~/components';
-import { ThemedButton, ThemedText, ThemedView } from '~/theme';
+import { ThemedBadge, ThemedButton, ThemedText, ThemedView } from '~/theme';
 
 type WorkoutExercise = {
   exerciseId: Id<'exercises'>;
@@ -16,6 +16,7 @@ type Workout = {
   _id: Id<'workouts'>;
   name: string;
   exercises: WorkoutExercise[];
+  createdBy?: Id<'users'>;
 };
 
 export default function TrackWorkoutScreen() {
@@ -61,7 +62,14 @@ export default function TrackWorkoutScreen() {
               onPress={() => handleSelectWorkout(workout)}
               className="mb-4">
               <ThemedView className="rounded-lg border border-gray-200 p-4">
-                <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
+                <ThemedView className="flex-row items-center gap-2">
+                  <ThemedText className="text-lg font-semibold">{workout.name}</ThemedText>
+                  {!workout.createdBy ? (
+                    <ThemedBadge variant="info">Public</ThemedBadge>
+                  ) : (
+                    <ThemedBadge variant="neutral">Private</ThemedBadge>
+                  )}
+                </ThemedView>
                 <ThemedText className="text-gray-600">
                   {workout.exercises.length} exercises
                 </ThemedText>

@@ -3,3 +3,4 @@ export { ThemedView } from './View';
 export { ThemedButton } from './Button';
 export { ThemedTextInput } from './TextInput';
 export { ThemedCheckbox } from './Checkbox';
+export { ThemedBadge } from './Badge';
