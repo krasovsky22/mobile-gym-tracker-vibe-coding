@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-expo-app",
-    "slug": "mobile-gym-tracker",
+    "name": "Potato Gym Tracker",
+    "slug": "potato-gym-tracker",
     "scheme": "your-app-scheme",
     "version": "1.0.0",
     "web": {
