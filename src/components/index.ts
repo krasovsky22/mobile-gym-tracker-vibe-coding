@@ -8,3 +8,4 @@ export { ProtectedRoute } from './ProtectedRoute';
 export { SwipeableSetRow } from './SwipeableSetRow';
 export { default as WorkoutForm } from './WorkoutForm';
 export { default as WorkoutPreviewModal } from './WorkoutPreviewModal';
+export { default as MuscleDiagram } from './MuscleDiagram';

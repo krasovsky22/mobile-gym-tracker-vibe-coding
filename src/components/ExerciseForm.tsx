@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, SafeAreaView, Alert } from 'react-native';
 
+import { MuscleDiagram } from './index';
 import { api } from '../../convex/_generated/api';
 
 import { useAlert } from '~/context/alert';
@@ -135,6 +136,18 @@ export default function ExerciseForm({ mode, exerciseId, initialData }: Exercise
                 ? `Selected: ${selectedMuscleGroups.join(', ')}`
                 : 'Select Muscle Groups'}
             </ThemedButton>
+            {/* Live visualization of selected muscle groups */}
+            <ThemedView className="mt-2 rounded-lg border border-gray-200 p-3">
+              <ThemedText className="mb-2 text-sm font-medium text-gray-600">
+                Visualization
+              </ThemedText>
+              <MuscleDiagram
+                selected={selectedMuscleGroups}
+                categories={category}
+                height={200}
+                onToggleMuscle={handleMuscleGroupToggle}
+              />
+            </ThemedView>
             {selectedMuscleGroups.length === 0 && (
               <ThemedText className="text-sm text-gray-500">
                 Please select at least one muscle group
